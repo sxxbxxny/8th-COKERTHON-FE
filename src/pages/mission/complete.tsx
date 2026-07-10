@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import goBackIcon from '../../assets/GoBack.svg'
+import closeIcon from '../../assets/X.svg'
 
 function Complete() {
   const navigate = useNavigate()
@@ -23,7 +25,7 @@ function Complete() {
             aria-label="응원 메시지 입력 닫기"
             onClick={() => setIsMessageInputOpen(false)}
           >
-            <img src="/src/assets/X.svg" alt="" aria-hidden="true" />
+            <img src={closeIcon} alt="" aria-hidden="true" />
           </button>
 
           <div className="mission-goal-input-copy">
@@ -57,7 +59,7 @@ function Complete() {
         aria-label="뒤로가기"
         onClick={() => navigate(-1)}
       >
-        <img src="/src/assets/GoBack.svg" alt="" aria-hidden="true" />
+        <img src={goBackIcon} alt="" aria-hidden="true" />
       </button>
 
       <main className="mission-goal-content">
@@ -72,6 +74,12 @@ function Complete() {
             <br />
             너무 수고 많았어요.
           </p>
+          <img
+            className="mission-goal-character"
+            src="/images/mychar1.svg"
+            alt=""
+            aria-hidden="true"
+          />
         </div>
       </main>
 
