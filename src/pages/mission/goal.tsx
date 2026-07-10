@@ -1,44 +1,47 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { createCustomMission } from '../../apis/missions'
 import closeIcon from '../../assets/X.svg'
 
 type GoalLocationState = {
   returnTo?: string
-  storageKey?: string
 }
 
 function Goal() {
   const navigate = useNavigate()
   const location = useLocation()
   const [goal, setGoal] = useState('')
-  const { returnTo = '/mission/step1', storageKey = 'step1PersonalMissionsV2' } =
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const { returnTo = '/mission/step1' } =
     (location.state as GoalLocationState | null) ?? {}
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const trimmedGoal = goal.trim()
     if (!trimmedGoal) return
 
-    let savedGoals: string[] = []
-    const storedGoals = localStorage.getItem(storageKey)
-
-    if (storedGoals) {
-      try {
-        const parsedGoals = JSON.parse(storedGoals)
-        if (Array.isArray(parsedGoals)) {
-          savedGoals = parsedGoals.filter(
-            (item): item is string => typeof item === 'string',
-          )
-        }
-      } catch {
-        savedGoals = []
-      }
+    const accessToken = localStorage.getItem('accessToken')
+    if (!accessToken) {
+      setErrorMessage('로그인이 필요합니다.')
+      return
     }
 
-    localStorage.setItem(storageKey, JSON.stringify([...savedGoals, trimmedGoal]))
-    navigate(returnTo, { replace: true })
+    setErrorMessage('')
+    setIsSubmitting(true)
+
+    try {
+      await createCustomMission({ title: trimmedGoal }, accessToken)
+      navigate(returnTo, { replace: true })
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : '개인 미션을 저장하지 못했습니다.',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -75,11 +78,17 @@ function Goal() {
 
         <button
           type="submit"
-          disabled={!goal.trim()}
+          disabled={!goal.trim() || isSubmitting}
           className="mx-auto mt-[164px] flex h-[40px] w-[160px] cursor-pointer items-center justify-center gap-[10px] rounded-[20px] border-0 bg-linear-to-r from-[#FFB8B8] to-[#FFB89F] px-0 py-3 font-[Pretendard] text-[18px] leading-none font-semibold tracking-[-0.45px] text-[var(--color-gray-10,#F8F8F8)] shadow-[0_0_8px_0_#FFB8B8] disabled:cursor-not-allowed disabled:opacity-50"
         >
           저장
         </button>
+
+        {errorMessage && (
+          <p className="mt-3 text-center font-[Pretendard] text-[13px] text-[var(--P-60,#DB8774)]">
+            {errorMessage}
+          </p>
+        )}
       </form>
     </section>
   )
