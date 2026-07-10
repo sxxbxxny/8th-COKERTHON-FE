@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { login } from '../apis/auth'
+import Button from '../components/Button'
 
 type LoginProps = {
   onMoveToSignup: () => void
@@ -11,6 +12,7 @@ function Login({ onMoveToSignup }: LoginProps) {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -30,46 +32,60 @@ function Login({ onMoveToSignup }: LoginProps) {
   }
 
   return (
-    <section>
-      <h1>로그인</h1>
-      <form onSubmit={handleLogin}>
-        <label>
-          이메일
+    <section className="login-page">
+      <form className="login-form" onSubmit={handleLogin}>
+        <label className="login-field">
+          <span>이메일</span>
           <input
             type="email"
             name="email"
             autoComplete="email"
+            placeholder="user@example.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
           />
         </label>
 
-        <label>
-          비밀번호
-          <input
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
+        <label className="login-field">
+          <span>비밀번호</span>
+          <div className="login-password-input">
+            <input
+              type={isPasswordVisible ? 'text' : 'password'}
+              name="password"
+              autoComplete="current-password"
+              placeholder="************"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+            <button
+              type="button"
+              aria-label={isPasswordVisible ? '비밀번호 숨기기' : '비밀번호 보기'}
+              onClick={() => setIsPasswordVisible((current) => !current)}
+            >
+              <img
+                src={isPasswordVisible ? '/eye.svg' : '/closeeye.svg'}
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         </label>
 
-        <button type="submit" disabled={isSubmitting}>
-          로그인
-        </button>
+        <div className="login-links">
+          <span>아직 계정이 없나요?</span>
+          <button type="button" onClick={onMoveToSignup}>
+            이메일로 회원가입
+          </button>
+        </div>
+
+        {message && <p className="login-message">{message}</p>}
+
+        <Button className="login-submit" type="submit" disabled={isSubmitting}>
+          로그인하기
+        </Button>
       </form>
-
-      {message && <p>{message}</p>}
-
-      <p className="auth-link">
-        계정이 없으신가요?
-        <button type="button" onClick={onMoveToSignup}>
-          회원가입
-        </button>
-      </p>
     </section>
   )
 }
