@@ -30,7 +30,7 @@ function Login({ onMoveToSignup }: LoginProps) {
   }
 
   return (
-    <section>
+    <section className="auth-page">
       <h1>로그인</h1>
       <form onSubmit={handleLogin}>
         <label>

@@ -2,7 +2,11 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { signup } from '../apis/auth'
 
-function Signup() {
+type SignupProps = {
+  onMoveToLogin: () => void
+}
+
+function Signup({ onMoveToLogin }: SignupProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
@@ -32,7 +36,7 @@ function Signup() {
   }
 
   return (
-    <section>
+    <section className="auth-page">
       <h1>회원가입</h1>
       <form onSubmit={handleSignup}>
         <label>
@@ -89,6 +93,13 @@ function Signup() {
       </form>
 
       {message && <p>{message}</p>}
+
+      <p className="auth-link">
+        이미 계정이 있으신가요?
+        <button type="button" onClick={onMoveToLogin}>
+          로그인
+        </button>
+      </p>
     </section>
   )
 }
