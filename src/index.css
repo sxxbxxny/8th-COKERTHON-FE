@@ -48,6 +48,7 @@
   --color-gray-10: var(--gray-10);
   --color-gray-20: var(--gray-20);
   --color-gray-90: var(--gray-90);
+  --color-primary-60: var(--P-60);
 
   --text: var(--gray-70);
   --text-h: var(--gray-100);

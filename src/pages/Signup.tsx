@@ -16,13 +16,13 @@ function Signup({ onMoveToLogin }: SignupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [isPasswordConfirmVisible, setIsPasswordConfirmVisible] = useState(false)
+  const isPasswordMismatch = passwordConfirm.length > 0 && password !== passwordConfirm
 
   const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setMessage('')
 
-    if (password !== passwordConfirm) {
-      setMessage('비밀번호가 일치하지 않습니다.')
+    if (isPasswordMismatch) {
       return
     }
 
@@ -113,6 +113,9 @@ function Signup({ onMoveToLogin }: SignupProps) {
               />
             </button>
           </div>
+          {isPasswordMismatch && (
+            <p className="signup-field-message">비밀번호가 일치하지 않습니다.</p>
+          )}
         </label>
 
         <label className="signup-field">
