@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { completeMission, extractCompletedMissionIds, getTodayMissions } from '../../apis/missions'
 import MissionBottomNav from '../../components/MissionBottomNav'
+import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
 
 const missions = [
   { id: 1, title: '물 한 잔 마시기', reward: '00명 수행 중' },
@@ -56,6 +57,7 @@ const storeCompletedMissions = (missionIds: Set<number>) => {
 
 function Step1() {
   const navigate = useNavigate()
+  const memberCount = useTrackMemberCount('이불 밖으로 한 걸음')
   const [completedMissions, setCompletedMissions] = useState<Set<number>>(getStoredCompletedMissions)
   const [submittingMissions, setSubmittingMissions] = useState<Set<number>>(new Set())
   const [missionError, setMissionError] = useState('')
@@ -153,7 +155,7 @@ function Step1() {
       <div className="mission-step-hero">
         <div className="mission-step-copy">
           <h1>이불 밖으로 한 걸음</h1>
-          <p>지금 00명이 함께 하고 있어요</p>
+          <p>지금 {memberCount ?? '00'}명이 함께 하고 있어요</p>
         </div>
       </div>
 

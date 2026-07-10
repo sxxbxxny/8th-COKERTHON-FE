@@ -1,9 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getMyTrack } from '../apis/tracks'
+import { ApiError } from '../apis/client'
+import { assignOnboardingTrack, getMyTrack } from '../apis/tracks'
 import Button from '../components/Button'
-
-type Difficulty = 'move' | 'outside' | 'people'
+import { useTrackMemberCount, type TrackTitle } from '../hooks/useTrackMemberCount'
+import {
+  getMissionPathByTrackName,
+  trackTypeByDifficulty,
+  type Difficulty,
+} from '../utils/tracks'
 
 type LocationState = {
   difficulty?: string
@@ -12,7 +17,7 @@ type LocationState = {
 const challengeByDifficulty: Record<
   Difficulty,
   {
-    title: string
+    title: TrackTitle
     imageSrc: string
     imageClassName: string
     ellipseSrc: string
@@ -56,7 +61,8 @@ const isDifficulty = (value: string | undefined): value is Difficulty =>
 function MyCh() {
   const navigate = useNavigate()
   const { state } = useLocation()
-  const [memberCount, setMemberCount] = useState<number | null>(null)
+  const [message, setMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const selectedDifficulty = useMemo(() => {
     const stateDifficulty = (state as LocationState | null)?.difficulty
@@ -75,25 +81,34 @@ function MyCh() {
   }, [state])
 
   const challenge = challengeByDifficulty[selectedDifficulty]
+  const memberCount = useTrackMemberCount(challenge.title)
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken')
-    if (!accessToken) return
+  const moveToMission = async () => {
+    setMessage('')
+    setIsSubmitting(true)
 
-    let isCancelled = false
-
-    getMyTrack(accessToken)
-      .then((response) => {
-        if (!isCancelled) setMemberCount(response.result.memberCount)
+    try {
+      const response = await assignOnboardingTrack({
+        trackType: trackTypeByDifficulty[selectedDifficulty],
       })
-      .catch(() => {
-        if (!isCancelled) setMemberCount(null)
-      })
+      navigate(getMissionPathByTrackName(response.result.trackName) ?? challenge.missionPath)
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
+        try {
+          const response = await getMyTrack()
+          navigate(getMissionPathByTrackName(response.result.trackName) ?? challenge.missionPath)
+          return
+        } catch {
+          navigate(challenge.missionPath)
+          return
+        }
+      }
 
-    return () => {
-      isCancelled = true
+      setMessage(error instanceof Error ? error.message : '트랙 배정에 실패했습니다.')
+    } finally {
+      setIsSubmitting(false)
     }
-  }, [])
+  }
 
   return (
     <main
@@ -130,8 +145,13 @@ function MyCh() {
       </div>
 
       <footer className="relative z-10 shrink-0 pt-4 pb-[max(50px,env(safe-area-inset-bottom))]">
-        <Button className="mx-auto" onClick={() => navigate(challenge.missionPath)}>
-          시작하기
+        {message && (
+          <p className="mx-auto mb-3 w-[300px] text-center font-[Pretendard] text-[14px] leading-[140%] font-normal text-[var(--P-60,#DB8774)]">
+            {message}
+          </p>
+        )}
+        <Button className="mx-auto" disabled={isSubmitting} onClick={moveToMission}>
+          {isSubmitting ? '배정 중...' : '시작하기'}
         </Button>
       </footer>
     </main>
