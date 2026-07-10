@@ -2,7 +2,6 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import './App.css'
 import Login from './pages/Login'
 import Mvp1 from './pages/mvp1'
-import Cheer from './pages/mission/cheer'
 import Complete from './pages/mission/complete'
 import Goal from './pages/mission/goal'
 import Step1 from './pages/mission/step1'
@@ -35,7 +34,6 @@ function App() {
       <Route path="/mission/step3" element={<Step3 />} />
       <Route path="/mission/goal" element={<Goal />} />
       <Route path="/mission/complete" element={<Complete />} />
-      <Route path="/mission/cheer" element={<Cheer />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
