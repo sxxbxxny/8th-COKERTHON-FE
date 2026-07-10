@@ -31,7 +31,7 @@ function App() {
         }
       />
       <Route path="/mvp1" element={<Mvp1 />} />
-      <Route path="/my" element={<My />} />
+      <Route path="/my/step1" element={<My />} />
       <Route path="/mission/step1" element={<Step1 />} />
       <Route path="/mission/step2" element={<Step2 />} />
       <Route path="/mission/step3" element={<Step3 />} />
