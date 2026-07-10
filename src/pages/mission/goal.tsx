@@ -1,92 +1,99 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { createCustomMission } from '../../apis/missions'
+import closeIcon from '../../assets/X.svg'
+import { getStringList, storeStringList } from '../../utils/missionStorage'
+
+type GoalLocationState = {
+  returnTo?: string
+  storageKey?: string
+}
 
 function Goal() {
-  const [isMessageInputOpen, setIsMessageInputOpen] = useState(false)
-  const [message, setMessage] = useState('')
-  const messageInputRef = useRef<HTMLInputElement>(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [goal, setGoal] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const { returnTo = '/mission/step1', storageKey = 'step1PersonalMissionsV2' } =
+    (location.state as GoalLocationState | null) ?? {}
 
-  useEffect(() => {
-    if (!isMessageInputOpen) return
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
-    messageInputRef.current?.focus()
-  }, [isMessageInputOpen])
+    const trimmedGoal = goal.trim()
+    if (!trimmedGoal) return
 
-  if (isMessageInputOpen) {
-    return (
-      <section className="mission-goal-input-page">
+    const accessToken = localStorage.getItem('accessToken')
+    if (!accessToken) {
+      setErrorMessage('로그인이 필요합니다.')
+      return
+    }
 
-        <main className="mission-goal-input-panel">
-          <button
-            className="mission-goal-input-close"
-            type="button"
-            aria-label="응원 메시지 입력 닫기"
-            onClick={() => setIsMessageInputOpen(false)}
-          >
-            <img src="/src/assets/X.svg" alt="" aria-hidden="true" />
-          </button>
+    setErrorMessage('')
+    setIsSubmitting(true)
 
-          <div className="mission-goal-input-copy">
-            <p>
-              아직 미션 수행 중인 팀원들에게
-              <br />
-              응원 메시지를 작성해주세요!
-            </p>
-
-            <input
-              ref={messageInputRef}
-              value={message}
-              placeholder="오늘도 힘내세요!"
-              onChange={(event) => setMessage(event.target.value)}
-            />
-          </div>
-
-          <button className="mission-goal-input-submit" type="button">
-            전송하기
-          </button>
-        </main>
-      </section>
-    )
+    try {
+      await createCustomMission({ title: trimmedGoal }, accessToken)
+      const personalMissions = getStringList(storageKey)
+      storeStringList(storageKey, [...personalMissions, trimmedGoal])
+      navigate(returnTo, { replace: true })
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : '개인 미션을 저장하지 못했습니다.',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
-    <section className="mission-goal-page">
-      <button className="mission-goal-back" type="button" aria-label="뒤로가기">
-        <img src="/src/assets/GoBack.svg" alt="" aria-hidden="true" />
+    <section className="relative h-full overflow-hidden bg-[var(--gray-00,#FFF)] px-[15px]">
+      <button
+        type="button"
+        aria-label="목표 설정 닫기"
+        className="absolute top-[57px] right-[15px] flex size-[15px] cursor-pointer items-center justify-center border-0 bg-transparent p-0"
+        onClick={() => navigate(returnTo, { replace: true })}
+      >
+        <img src={closeIcon} alt="" aria-hidden="true" className="size-[15px]" />
       </button>
 
-      <main className="mission-goal-content">
-        <div className="mission-goal-message">
-          <h1>
-            오늘의 목표를
+      <form className="pt-[153px]" onSubmit={handleSubmit}>
+        <div className="ml-[15px]">
+          <label
+            htmlFor="personal-goal"
+            className="block text-left font-[Pretendard] text-[16px] leading-[140%] font-semibold tracking-[-0.4px] text-[var(--gray-100,#171717)]"
+          >
+            가볍게 이룰 수 있는
             <br />
-            다 이뤘어요
-          </h1>
-          <p>
-            오늘도 한걸음 더 나아간 당신!
-            <br />
-            너무 수고 많았어요.
-          </p>
-          <img
-            className="mission-goal-character"
-            src="/src/assets/캐릭터 1 1.svg"
-            alt=""
-            aria-hidden="true"
-          />
+            나만의 목표를 설정해주세요.
+          </label>
         </div>
-      </main>
 
-      <footer className="mission-goal-footer">
-        <p>
-          아직 미션 수행 중인 팀원들에게
-          <br />
-          응원 메시지 한 줄 어때요?
-        </p>
         <input
-          aria-label="응원 메시지"
-          placeholder="응원 메시지를 작성해주세요"
-          onFocus={() => setIsMessageInputOpen(true)}
+          id="personal-goal"
+          type="text"
+          value={goal}
+          placeholder="집 오는 길에 편의점 들르기"
+          className="mt-[21px] h-[50px] w-[360px] max-w-full rounded-[20px] border border-[var(--P-50,#FFB89F)] bg-transparent px-[15px] font-[Pretendard] text-[14px] text-[var(--gray-100,#171717)] outline-none placeholder:text-[var(--gray-60,#909090)] focus:border-[var(--P-60,#DB8774)]"
+          onChange={(event) => setGoal(event.target.value)}
         />
-      </footer>
+
+        <button
+          type="submit"
+          disabled={!goal.trim() || isSubmitting}
+          className="mx-auto mt-[164px] flex h-[40px] w-[160px] cursor-pointer items-center justify-center gap-[10px] rounded-[20px] border-0 bg-linear-to-r from-[#FFB8B8] to-[#FFB89F] px-0 py-3 font-[Pretendard] text-[18px] leading-none font-semibold tracking-[-0.45px] text-[var(--color-gray-10,#F8F8F8)] shadow-[0_0_8px_0_#FFB8B8] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          저장
+        </button>
+
+        {errorMessage && (
+          <p className="mt-3 text-center font-[Pretendard] text-[13px] text-[var(--P-60,#DB8774)]">
+            {errorMessage}
+          </p>
+        )}
+      </form>
     </section>
   )
 }

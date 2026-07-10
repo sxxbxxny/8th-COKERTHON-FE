@@ -3,9 +3,14 @@ import { useNavigate } from 'react-router-dom'
 type MissionBottomNavProps = {
   activeTab: 'mission' | 'my'
   missionPath?: string
+  myPath?: string
 }
 
-function MissionBottomNav({ activeTab, missionPath = '/mission/step1' }: MissionBottomNavProps) {
+function MissionBottomNav({
+  activeTab,
+  missionPath = '/mission/step1',
+  myPath = '/my/step1',
+}: MissionBottomNavProps) {
   const navigate = useNavigate()
   const isMissionTab = activeTab === 'mission'
 
@@ -29,7 +34,7 @@ function MissionBottomNav({ activeTab, missionPath = '/mission/step1' }: Mission
         className={`mission-nav-item${!isMissionTab ? ' is-active' : ''}`}
         type="button"
         aria-current={!isMissionTab ? 'page' : undefined}
-        onClick={() => navigate('/my', { state: { missionPath } })}
+        onClick={() => navigate(myPath, { state: { missionPath } })}
       >
         <img
           className="mission-nav-icon"

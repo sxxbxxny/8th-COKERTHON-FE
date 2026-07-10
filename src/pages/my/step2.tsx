@@ -9,25 +9,18 @@ type LocationState = {
 }
 
 const stampPositions = [
-  { left: '92%', top: '5%' },
-  { left: '71.5%', top: '10.5%' },
-  { left: '46.5%', top: '15%' },
-  { left: '25%', top: '18.5%' },
-  { left: '5.5%', top: '25.5%' },
-  { left: '30%', top: '33.5%' },
-  { left: '50%', top: '38%' },
-  { left: '70%', top: '42%' },
-  { left: '93%', top: '50%' },
-  { left: '70%', top: '57%' },
-  { left: '40%', top: '62.5%' },
-  { left: '10%', top: '72%' },
-  { left: '30%', top: '81%' },
-  { left: '60%', top: '88%' },
+  { left: '84%', top: '8%' },
+  { left: '50%', top: '8%' },
+  { left: '20%', top: '8%' },
+  { left: '10%', top: '30%' },
+  { left: '8%', top: '58%' },
+  { left: '20%', top: '90%' },
+  { left: '50%', top: '92%' },
 ]
 
-function MyStep1() {
+function MyStep2() {
   const location = useLocation()
-  const memberCount = useTrackMemberCount('이불 밖으로 한 걸음')
+  const memberCount = useTrackMemberCount('문 밖으로 한 걸음')
   const [progress, setProgress] = useState({
     requiredDays: stampPositions.length,
     completedDays: 0,
@@ -35,7 +28,7 @@ function MyStep1() {
   const missionPath =
     typeof (location.state as LocationState | null)?.missionPath === 'string'
       ? (location.state as LocationState).missionPath
-      : '/mission/step1'
+      : '/mission/step2'
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
@@ -66,22 +59,16 @@ function MyStep1() {
     stampPositions.length,
   )
   const remainingDays = Math.max(progress.requiredDays - progress.completedDays, 0)
-  const isFootstepCompleted =
-    completedStampCount === stampPositions.length
+  const isFootstepCompleted = completedStampCount === stampPositions.length
 
   return (
     <section className="mission-step-page">
       <header className="my-page-header">
         <div>
-          <h1>이불 밖으로 한 걸음</h1>
+          <h1>문 밖으로 한 걸음</h1>
           <p>지금 {memberCount ?? '00'}명이 함께 하고 있어요</p>
         </div>
-
-        <img
-          src="/images/my_my.svg"
-          alt=""
-          aria-hidden="true"
-        />
+        <img src="/images/my_my.svg" alt="" aria-hidden="true" />
       </header>
 
       <main className="my-stamp-screen">
@@ -90,16 +77,8 @@ function MyStep1() {
           <p>다음 단계까지 {remainingDays}개 남았어요</p>
         </div>
 
-        <div
-          className="my-stamp-route"
-          aria-label="미션 수행 스탬프 현황"
-        >
-          <img
-            className="my-stamp-path"
-            src="/images/my_load1.svg"
-            alt=""
-            aria-hidden="true"
-          />
+        <div className="my-stamp-route my-step2-route" aria-label="미션 수행 스탬프 현황">
+          <img className="my-stamp-path" src="/images/my_road2.svg" alt="" aria-hidden="true" />
 
           {stampPositions.map((position, index) => {
             const isCompleted = index < completedStampCount
@@ -121,7 +100,13 @@ function MyStep1() {
           })}
 
           <img
-            className="my-stamp-next"
+            className="my-step2-character"
+            src="/images/mychar2.svg"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            className="my-step2-next"
             src={
               isFootstepCompleted
                 ? '/images/my_footstep_pink.svg'
@@ -130,23 +115,12 @@ function MyStep1() {
             alt=""
             aria-hidden="true"
           />
-
-          <img
-            className="my-stamp-character"
-            src="/images/mychar1.svg"
-            alt=""
-            aria-hidden="true"
-          />
         </div>
       </main>
 
-      <MissionBottomNav
-        activeTab="my"
-        missionPath={missionPath}
-        myPath="/my/step1"
-      />
+      <MissionBottomNav activeTab="my" missionPath={missionPath} myPath="/my/step2" />
     </section>
   )
 }
 
-export default MyStep1
+export default MyStep2

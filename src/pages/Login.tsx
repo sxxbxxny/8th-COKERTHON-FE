@@ -1,13 +1,17 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { login } from '../apis/auth'
+import { getMyTrack } from '../apis/tracks'
 import Button from '../components/Button'
+import { setAuthUserKey } from '../utils/missionStorage'
+import { getMissionPathByTrackName } from '../utils/tracks'
 
 type LoginProps = {
   onMoveToSignup: () => void
+  onLoginSuccess: (path: string) => void
 }
 
-function Login({ onMoveToSignup }: LoginProps) {
+function Login({ onMoveToSignup, onLoginSuccess }: LoginProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
@@ -23,7 +27,14 @@ function Login({ onMoveToSignup }: LoginProps) {
       const response = await login({ email, password })
       localStorage.setItem('accessToken', response.result.accessToken)
       localStorage.setItem('refreshToken', response.result.refreshToken)
-      setMessage('로그인 성공')
+      setAuthUserKey(email)
+
+      try {
+        const myTrackResponse = await getMyTrack()
+        onLoginSuccess(getMissionPathByTrackName(myTrackResponse.result.trackName) ?? '/mvp1')
+      } catch {
+        onLoginSuccess('/mvp1')
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '로그인 실패')
     } finally {

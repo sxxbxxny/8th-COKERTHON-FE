@@ -1,7 +1,8 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(
-  /\/$/,
-  '',
-)
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ??
+  import.meta.env.VITE_API_PROXY_TARGET ??
+  ''
+).replace(/\/$/, '')
 
 type RequestOptions = {
   method?: string
@@ -16,15 +17,29 @@ export type ApiResponse<T> = {
   result: T
 }
 
+export class ApiError extends Error {
+  code: string
+  status: number
+
+  constructor(message: string, code: string, status: number) {
+    super(message)
+    this.name = 'ApiError'
+    this.code = code
+    this.status = status
+  }
+}
+
 export async function request<T>(
   path: string,
   { method = 'GET', body, accessToken }: RequestOptions = {},
 ) {
+  const token = accessToken ?? localStorage.getItem('accessToken') ?? undefined
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   })
@@ -51,7 +66,11 @@ export async function request<T>(
   }
 
   if (!response.ok || !data.isSuccess) {
-    throw new Error(data.message || 'API 요청에 실패했습니다.')
+    throw new ApiError(
+      data.message || 'API 요청에 실패했습니다.',
+      data.code || String(response.status),
+      response.status,
+    )
   }
 
   return data
