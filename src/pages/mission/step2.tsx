@@ -77,6 +77,12 @@ function Step2() {
 
       <main className="mission-step-content">
         <div className="mission-gradient-panel">
+          <img
+            className="mission-step-image mission-step-image-ellipse211"
+            src="/images/ellipse-211.svg"
+            alt=""
+          />
+          <img className="mission-step-image mission-step-image-step2" src="/images/step2.svg" alt="" />
           <div className="mission-status-pill">오늘도 화이팅하세요 :)</div>
         </div>
 

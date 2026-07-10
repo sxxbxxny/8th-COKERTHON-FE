@@ -367,6 +367,7 @@
 
 .mission-gradient-panel {
   display: flex;
+  position: relative;
   width: 390px;
   height: 279px;
   max-width: 100%;
@@ -383,6 +384,66 @@
 
 .mission-gradient-panel-step3 {
   background: radial-gradient(50% 50% at 50% 50%, #B3EAFF 0%, #D7F4FF 30.77%, #FFF6EB 100%);
+}
+
+.mission-step-image {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.mission-step-image-step1 {
+  top: 95px;
+  right: 100px;
+  bottom: 110px;
+  left: 99px;
+  width: 191px;
+  height: 74px;
+}
+
+.mission-step-image-ellipse210 {
+  top: 153px;
+  right: 97px;
+  bottom: 100px;
+  left: 97px;
+  width: 196px;
+  height: 26px;
+}
+
+.mission-step-image-step2 {
+  top: 83px;
+  right: 117px;
+  bottom: 79px;
+  left: 118px;
+  width: 155px;
+  height: 117px;
+}
+
+.mission-step-image-ellipse211 {
+  top: 197px;
+  right: 111px;
+  bottom: 69px;
+  left: 120px;
+  width: 159px;
+  height: 13px;
+}
+
+.mission-step-image-ellipse212 {
+  top: 204px;
+  right: 115px;
+  bottom: 61px;
+  left: 116px;
+  width: 159px;
+  height: 14px;
+}
+
+.mission-step-image-step3 {
+  top: 59px;
+  right: 134px;
+  bottom: 82px;
+  left: 133px;
+  width: 123px;
+  height: 138px;
 }
 
 .mission-status-pill {

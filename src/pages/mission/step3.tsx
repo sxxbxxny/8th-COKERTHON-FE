@@ -77,6 +77,12 @@ function Step3() {
 
       <main className="mission-step-content">
         <div className="mission-gradient-panel mission-gradient-panel-step3">
+          <img
+            className="mission-step-image mission-step-image-ellipse212"
+            src="/images/ellipse-212.svg"
+            alt=""
+          />
+          <img className="mission-step-image mission-step-image-step3" src="/images/step3.svg" alt="" />
           <div className="mission-status-pill">오늘도 화이팅하세요 :)</div>
         </div>
 
