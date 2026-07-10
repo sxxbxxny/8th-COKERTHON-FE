@@ -397,6 +397,7 @@
   right: 100px;
   bottom: 110px;
   left: 99px;
+  z-index: 3;
   width: 191px;
   height: 74px;
 }
@@ -410,13 +411,34 @@
   height: 26px;
 }
 
+.mission-step-image-flag-step1 {
+  top: 48px;
+  right: 84px;
+  bottom: 147px;
+  left: 229px;
+  z-index: 2;
+  width: 77px;
+  height: 84px;
+}
+
 .mission-step-image-step2 {
   top: 83px;
   right: 117px;
   bottom: 79px;
   left: 118px;
+  z-index: 3;
   width: 155px;
   height: 117px;
+}
+
+.mission-step-image-flag-step2 {
+  top: 41px;
+  right: 79px;
+  bottom: 154px;
+  left: 234px;
+  z-index: 2;
+  width: 77px;
+  height: 84px;
 }
 
 .mission-step-image-ellipse211 {
@@ -442,8 +464,19 @@
   right: 134px;
   bottom: 82px;
   left: 133px;
+  z-index: 3;
   width: 123px;
   height: 138px;
+}
+
+.mission-step-image-flag-step3 {
+  top: 36px;
+  right: 68px;
+  bottom: 159px;
+  left: 245px;
+  z-index: 2;
+  width: 77px;
+  height: 84px;
 }
 
 .mission-status-pill {
@@ -536,9 +569,12 @@
 }
 
 .mission-check {
+  display: flex;
   width: 22px;
   height: 22px;
   flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--gray-40, #d5d5d5);
   border-radius: 50%;
   box-sizing: border-box;
@@ -549,7 +585,14 @@
 
 .mission-check.is-completed {
   border-color: transparent;
-  background: url('/images/check_f.svg') center / contain no-repeat;
+  background: transparent;
+}
+
+.mission-check-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
 }
 
 .mission-title {

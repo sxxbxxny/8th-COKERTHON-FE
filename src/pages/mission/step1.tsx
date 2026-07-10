@@ -34,6 +34,10 @@ function Step1() {
   const [completedMissions, setCompletedMissions] = useState<Set<string>>(new Set())
   const [personalMissions] = useState(getPersonalMissions)
   const [completedPersonalMissions, setCompletedPersonalMissions] = useState<Set<string>>(new Set())
+  const totalMissionCount = missions.length + personalMissions.length
+  const completedMissionCount = completedMissions.size + completedPersonalMissions.size
+  const isAllMissionsCompleted =
+    totalMissionCount > 0 && completedMissionCount === totalMissionCount
 
   const moveToGoal = () => {
     navigate('/mission/goal', {
@@ -86,6 +90,9 @@ function Step1() {
             alt=""
           />
           <img className="mission-step-image mission-step-image-step1" src="/images/step1.svg" alt="" />
+          {isAllMissionsCompleted && (
+            <img className="mission-step-image mission-step-image-flag-step1" src="/images/flag.svg" alt="" />
+          )}
           <div className="mission-status-pill">오늘도 화이팅하세요 :)</div>
         </div>
 
@@ -110,7 +117,9 @@ function Step1() {
                     aria-label={`${mission.title} 완료`}
                     aria-pressed={isCompleted}
                     onClick={() => toggleMission(mission.title)}
-                  />
+                  >
+                    {isCompleted && <img className="mission-check-icon" src="/images/check_f.svg" alt="" />}
+                  </button>
                   <span className="mission-title">{mission.title}</span>
                   <span className="mission-reward">{mission.reward}</span>
                 </li>
@@ -149,7 +158,9 @@ function Step1() {
                         aria-label={`${mission} 완료`}
                         aria-pressed={isCompleted}
                         onClick={() => togglePersonalMission(mission)}
-                      />
+                      >
+                        {isCompleted && <img className="mission-check-icon" src="/images/check_f.svg" alt="" />}
+                      </button>
                       <span>{mission}</span>
                     </li>
                   )
