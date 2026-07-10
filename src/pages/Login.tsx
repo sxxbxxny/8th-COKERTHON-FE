@@ -5,9 +5,10 @@ import Button from '../components/Button'
 
 type LoginProps = {
   onMoveToSignup: () => void
+  onLoginSuccess: () => void
 }
 
-function Login({ onMoveToSignup }: LoginProps) {
+function Login({ onMoveToSignup, onLoginSuccess }: LoginProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
@@ -23,7 +24,7 @@ function Login({ onMoveToSignup }: LoginProps) {
       const response = await login({ email, password })
       localStorage.setItem('accessToken', response.result.accessToken)
       localStorage.setItem('refreshToken', response.result.refreshToken)
-      setMessage('로그인 성공')
+      onLoginSuccess()
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '로그인 실패')
     } finally {

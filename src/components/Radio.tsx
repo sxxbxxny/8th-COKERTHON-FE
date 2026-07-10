@@ -12,6 +12,7 @@ function Radio({
   className = '',
   inputClassName = '',
   disabled,
+  checked,
   ...props
 }: RadioProps) {
   const containerClasses = [
@@ -31,9 +32,19 @@ function Radio({
         type="radio"
         className={inputClasses}
         disabled={disabled}
+        checked={checked}
         {...props}
       />
-      <span className="size-4 aspect-square shrink-0 rounded-full border border-(--gray-40) bg-(--gray-00) transition-colors peer-checked:border-[var(--P-50,#FFB89F)] peer-checked:bg-[var(--P-50,#FFB89F)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#933732]/45" />
+      <span className="relative size-6 aspect-square shrink-0 rounded-full border border-(--gray-40) bg-(--gray-00) transition-colors peer-checked:border-transparent peer-checked:bg-transparent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#933732]/45">
+        {checked && (
+          <img
+            className="absolute inset-0 size-6"
+            src="/images/check_f.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        )}
+      </span>
       <span className="font-[Pretendard] text-[18px] leading-[140%] font-semibold tracking-[-0.45px] text-[var(--gray-80,#555)] not-italic">
         {children}
       </span>

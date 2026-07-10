@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import './App.css'
 import Login from './pages/Login'
+import MyCh from './pages/my_ch'
 import My from './pages/my'
 import Mvp1 from './pages/mvp1'
 import Complete from './pages/mission/complete'
@@ -18,7 +19,12 @@ function App() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route
         path="/login"
-        element={<Login onMoveToSignup={() => navigate('/signup')} />}
+        element={
+          <Login
+            onMoveToSignup={() => navigate('/signup')}
+            onLoginSuccess={() => navigate('/mvp1', { replace: true })}
+          />
+        }
       />
       <Route
         path="/signup"
@@ -30,6 +36,8 @@ function App() {
         }
       />
       <Route path="/mvp1" element={<Mvp1 />} />
+      <Route path="/my_ch" element={<MyCh />} />
+      <Route path="/my" element={<My />} />
       <Route path="/my/step1" element={<My />} />
       <Route path="/mission/step1" element={<Step1 />} />
       <Route path="/mission/step2" element={<Step2 />} />
