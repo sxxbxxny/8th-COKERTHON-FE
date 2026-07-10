@@ -3,6 +3,8 @@ import './App.css'
 import Login from './pages/Login'
 import MyCh from './pages/my_ch'
 import My from './pages/my'
+import MyComplete1 from './pages/my/complete1'
+import MyStep2 from './pages/my/step2'
 import Mvp1 from './pages/mvp1'
 import Complete from './pages/mission/complete'
 import Goal from './pages/mission/goal'
@@ -39,6 +41,8 @@ function App() {
       <Route path="/my_ch" element={<MyCh />} />
       <Route path="/my" element={<My />} />
       <Route path="/my/step1" element={<My />} />
+      <Route path="/my/complete1" element={<MyComplete1 />} />
+      <Route path="/my/step2" element={<MyStep2 />} />
       <Route path="/mission/step1" element={<Step1 />} />
       <Route path="/mission/step2" element={<Step2 />} />
       <Route path="/mission/step3" element={<Step3 />} />
