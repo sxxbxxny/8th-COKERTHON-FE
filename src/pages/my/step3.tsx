@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { getMissionProgress } from '../../apis/missions'
 import MissionBottomNav from '../../components/MissionBottomNav'
 import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
+import { getUserStorageKey } from '../../utils/missionStorage'
 
 type LocationState = {
   missionPath?: string
@@ -15,6 +16,8 @@ const stampPositions = [
   { left: '9%', top: '65%' },
   { left: '55%', top: '92%' },
 ]
+
+const missionStep = 3
 
 function MyStep3() {
   const location = useLocation()
@@ -52,11 +55,18 @@ function MyStep3() {
     }
   }, [])
 
+  const lastCompletedMissionStep = Number(
+    localStorage.getItem(getUserStorageKey('lastCompletedMissionStep')),
+  )
+  const hasCompletedCurrentStep = lastCompletedMissionStep === missionStep
+  const normalizedCompletedDays = hasCompletedCurrentStep
+    ? Math.max(progress.completedDays, 1)
+    : progress.completedDays
   const completedStampCount = Math.min(
-    Math.max(progress.completedDays, 0),
+    Math.max(normalizedCompletedDays, 0),
     stampPositions.length,
   )
-  const remainingDays = Math.max(progress.requiredDays - progress.completedDays, 0)
+  const remainingDays = Math.max(progress.requiredDays - normalizedCompletedDays, 0)
   const isFootstepCompleted = completedStampCount === stampPositions.length
 
   return (
