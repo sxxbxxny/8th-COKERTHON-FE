@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import './App.css'
 import Login from './pages/Login'
+import My from './pages/my'
 import Mvp1 from './pages/mvp1'
 import Cheer from './pages/mission/cheer'
 import Complete from './pages/mission/complete'
@@ -30,6 +31,7 @@ function App() {
         }
       />
       <Route path="/mvp1" element={<Mvp1 />} />
+      <Route path="/my" element={<My />} />
       <Route path="/mission/step1" element={<Step1 />} />
       <Route path="/mission/step2" element={<Step2 />} />
       <Route path="/mission/step3" element={<Step3 />} />
