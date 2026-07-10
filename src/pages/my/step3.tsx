@@ -9,7 +9,7 @@ const stampPositions = [
   { left: '45%', top: '8%' },
   { left: '85%', top: '8%' },
   { left: '10%', top: '27%' },
-  { left: '18%', top: '65%' },
+  { left: '9%', top: '65%' },
   { left: '55%', top: '92%' },
 ]
 
