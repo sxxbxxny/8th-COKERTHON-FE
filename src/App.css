@@ -981,7 +981,7 @@
   height: 100%;
   flex-direction: column;
   box-sizing: border-box;
-  padding: 30px 15px 15px;
+  padding: 0 15px 50px;
   overflow: hidden;
   background: var(--2, linear-gradient(180deg, #FFE9E2 0%, #FFF6EB 33.65%, #FFF 66.83%));
   color: var(--gray-100, #171717);
@@ -1026,27 +1026,32 @@
   flex: 1;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 103px;
+  padding-top: 142px;
 }
 
 .mission-goal-message h1 {
-  width: 132px;
+  width: 260px;
   margin: 0 auto;
   color: var(--gray-100, #171717);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
   line-height: 140%;
-  letter-spacing: 0;
+  letter-spacing: -0.6px;
 }
 
 .mission-goal-message p {
-  width: 180px;
-  margin: 8px auto 0;
+  width: 300px;
+  margin: 31px auto 0;
   color: var(--P-60, #db8774);
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 140%;
-  letter-spacing: 0;
+  letter-spacing: -0.4px;
+}
+
+.mission-goal-character {
+  display: block;
+  margin: 58px auto 0;
 }
 
 .mission-goal-footer {
@@ -1069,7 +1074,7 @@
   height: 50px;
   align-items: center;
   justify-content: space-between;
-  margin: 0 auto 11px;
+  margin: 0 auto;
   border: 0;
   border-radius: 20px;
   background: var(--color-gray-20, #F0F0F0);
@@ -1087,6 +1092,16 @@
 
 .mission-goal-footer input::placeholder {
   color: var(--color-gray-70, #696969);
+}
+
+.mission-cheer-message {
+  margin: 8px auto 0;
+  color: var(--P-60, #db8774);
+  font-family: Pretendard, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 140%;
+  text-align: center;
 }
 
 .mission-goal-input-page {
@@ -1201,6 +1216,11 @@
   letter-spacing: -0.45px;
   padding: 12px 0;
   cursor: pointer;
+}
+
+.mission-goal-input-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .mission-goal-footer button {

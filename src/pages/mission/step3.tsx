@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { completeMission, extractCompletedMissionIds, getTodayMissions } from '../../apis/missions'
 import MissionBottomNav from '../../components/MissionBottomNav'
 import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
+
+type StepLocationState = {
+  restoreCompleted?: boolean
+}
 
 const missions = [
   { id: 7, title: '사람이 있는 공간에서 5분 머물기', reward: '00명 수행 중' },
@@ -12,6 +16,7 @@ const missions = [
 
 const personalMissionsStorageKey = 'step3PersonalMissionsV2'
 const completedMissionsStorageKey = 'step3CompletedMissionsV1'
+const missionStep = 3
 
 const getPersonalMissions = () => {
   const storedMissions = localStorage.getItem(personalMissionsStorageKey)
@@ -57,12 +62,25 @@ const storeCompletedMissions = (missionIds: Set<number>) => {
 
 function Step3() {
   const navigate = useNavigate()
+  const { state } = useLocation()
   const memberCount = useTrackMemberCount('관계를 향한 한 걸음')
-  const [completedMissions, setCompletedMissions] = useState<Set<number>>(getStoredCompletedMissions)
+  const shouldRestoreCompleted =
+    (state as StepLocationState | null)?.restoreCompleted === true
+  const [personalMissions] = useState(getPersonalMissions)
+  const [completedMissions, setCompletedMissions] = useState<Set<number>>(() => {
+    if (shouldRestoreCompleted) {
+      const restoredMissions = new Set(missions.map((mission) => mission.id))
+      storeCompletedMissions(restoredMissions)
+      return restoredMissions
+    }
+
+    return getStoredCompletedMissions()
+  })
+  const [completedPersonalMissions, setCompletedPersonalMissions] = useState<Set<string>>(
+    () => new Set(shouldRestoreCompleted ? personalMissions : []),
+  )
   const [submittingMissions, setSubmittingMissions] = useState<Set<number>>(new Set())
   const [missionError, setMissionError] = useState('')
-  const [personalMissions] = useState(getPersonalMissions)
-  const [completedPersonalMissions, setCompletedPersonalMissions] = useState<Set<string>>(new Set())
   const totalMissionCount = missions.length + personalMissions.length
   const completedMissionCount = completedMissions.size + completedPersonalMissions.size
   const isAllMissionsCompleted =
@@ -70,7 +88,7 @@ function Step3() {
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
-    if (!accessToken) return
+    if (!accessToken || shouldRestoreCompleted) return
 
     let isMounted = true
     const visibleMissionIds = new Set(missions.map((mission) => mission.id))
@@ -96,12 +114,17 @@ function Step3() {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [shouldRestoreCompleted])
 
   const moveToGoal = () => {
     navigate('/mission/goal', {
       state: { returnTo: '/mission/step3', storageKey: personalMissionsStorageKey },
     })
+  }
+
+  const moveToComplete = () => {
+    localStorage.setItem('lastCompletedMissionStep', String(missionStep))
+    navigate('/mission/complete', { replace: true, state: { step: missionStep } })
   }
 
   const handleMissionComplete = async (missionId: number) => {
@@ -118,11 +141,17 @@ function Step3() {
 
     try {
       await completeMission(missionId, accessToken)
-      setCompletedMissions((prev) => {
-        const next = new Set(prev).add(missionId)
-        storeCompletedMissions(next)
-        return next
-      })
+
+      const nextCompletedMissions = new Set(completedMissions).add(missionId)
+      setCompletedMissions(nextCompletedMissions)
+      storeCompletedMissions(nextCompletedMissions)
+
+      if (
+        totalMissionCount > 0 &&
+        nextCompletedMissions.size + completedPersonalMissions.size === totalMissionCount
+      ) {
+        moveToComplete()
+      }
     } catch (error) {
       setMissionError(
         error instanceof Error ? error.message : '미션 완료 처리에 실패했습니다.',
@@ -137,17 +166,22 @@ function Step3() {
   }
 
   const togglePersonalMission = (title: string) => {
-    setCompletedPersonalMissions((prev) => {
-      const next = new Set(prev)
+    const nextCompletedPersonalMissions = new Set(completedPersonalMissions)
 
-      if (next.has(title)) {
-        next.delete(title)
-      } else {
-        next.add(title)
-      }
+    if (nextCompletedPersonalMissions.has(title)) {
+      nextCompletedPersonalMissions.delete(title)
+    } else {
+      nextCompletedPersonalMissions.add(title)
+    }
 
-      return next
-    })
+    setCompletedPersonalMissions(nextCompletedPersonalMissions)
+
+    if (
+      totalMissionCount > 0 &&
+      completedMissions.size + nextCompletedPersonalMissions.size === totalMissionCount
+    ) {
+      moveToComplete()
+    }
   }
 
   return (
