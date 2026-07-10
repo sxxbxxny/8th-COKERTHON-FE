@@ -45,6 +45,11 @@ function Login({ onMoveToSignup, onLoginSuccess }: LoginProps) {
   return (
     <section className="login-page">
       <form className="login-form" onSubmit={handleLogin}>
+        <img
+          className="login-logo"
+          src="/images/logo.svg"
+          alt="DIDIM"
+        />
         <label className="login-field">
           <span>이메일</span>
           <input
