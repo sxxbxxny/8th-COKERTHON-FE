@@ -64,7 +64,11 @@ function Login({ onMoveToSignup }: LoginProps) {
               aria-label={isPasswordVisible ? '비밀번호 숨기기' : '비밀번호 보기'}
               onClick={() => setIsPasswordVisible((current) => !current)}
             >
-              <img src="/closeeye.svg" alt="" aria-hidden="true" />
+              <img
+                src={isPasswordVisible ? '/eye.svg' : '/closeeye.svg'}
+                alt=""
+                aria-hidden="true"
+              />
             </button>
           </div>
         </label>
@@ -78,7 +82,7 @@ function Login({ onMoveToSignup }: LoginProps) {
 
         {message && <p className="login-message">{message}</p>}
 
-        <Button type="submit" disabled={isSubmitting}>
+        <Button className="login-submit" type="submit" disabled={isSubmitting}>
           로그인하기
         </Button>
       </form>
