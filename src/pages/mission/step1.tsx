@@ -8,10 +8,12 @@ const missions = [
   { title: '햇빛 5분 쬐기', reward: '10장 수줍음' },
 ]
 
+const personalMissionsStorageKey = 'step1PersonalMissionsV2'
+
 type ActiveTab = 'mission' | 'my'
 
 const getPersonalMissions = () => {
-  const storedMissions = localStorage.getItem('personalMissionsV2')
+  const storedMissions = localStorage.getItem(personalMissionsStorageKey)
 
   if (storedMissions) {
     try {
@@ -35,6 +37,12 @@ function Step1() {
   const [personalMissions] = useState(getPersonalMissions)
   const [completedPersonalMissions, setCompletedPersonalMissions] = useState<Set<string>>(new Set())
   const isMissionTab = activeTab === 'mission'
+
+  const moveToGoal = () => {
+    navigate('/mission/goal', {
+      state: { returnTo: '/mission/step1', storageKey: personalMissionsStorageKey },
+    })
+  }
 
   const toggleMission = (title: string) => {
     setCompletedMissions((prev) => {
@@ -117,7 +125,7 @@ function Step1() {
                       className="personal-mission-add"
                       type="button"
                       aria-label="나의 미션 등록"
-                      onClick={() => navigate('/mission/goal')}
+                      onClick={moveToGoal}
                     >
                       +
                     </button>
@@ -153,7 +161,7 @@ function Step1() {
                       className="personal-mission-icon-button"
                       type="button"
                       aria-label="나의 미션 추가하기"
-                      onClick={() => navigate('/mission/goal')}
+                      onClick={moveToGoal}
                     >
                       <img className="personal-mission-icon-bg" src="/images/ellipse-1.svg" alt="" />
                       <img

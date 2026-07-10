@@ -1,8 +1,10 @@
 import { type FormEvent, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-const getPersonalMissions = () => {
-  const storedMissions = localStorage.getItem('personalMissionsV2')
+const defaultPersonalMissionsStorageKey = 'step1PersonalMissionsV2'
+
+const getPersonalMissions = (storageKey = defaultPersonalMissionsStorageKey) => {
+  const storedMissions = localStorage.getItem(storageKey)
 
   if (storedMissions) {
     try {
@@ -21,7 +23,22 @@ const getPersonalMissions = () => {
 
 function Goal() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [mission, setMission] = useState('')
+  const returnTo =
+    typeof location.state === 'object' &&
+    location.state !== null &&
+    'returnTo' in location.state &&
+    typeof location.state.returnTo === 'string'
+      ? location.state.returnTo
+      : '/mission/step1'
+  const storageKey =
+    typeof location.state === 'object' &&
+    location.state !== null &&
+    'storageKey' in location.state &&
+    typeof location.state.storageKey === 'string'
+      ? location.state.storageKey
+      : defaultPersonalMissionsStorageKey
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -31,9 +48,9 @@ function Goal() {
       return
     }
 
-    const personalMissions = [...getPersonalMissions(), nextMission]
-    localStorage.setItem('personalMissionsV2', JSON.stringify(personalMissions))
-    navigate('/mission/step1')
+    const personalMissions = [...getPersonalMissions(storageKey), nextMission]
+    localStorage.setItem(storageKey, JSON.stringify(personalMissions))
+    navigate(returnTo)
   }
 
   return (
