@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import closeIcon from '../../assets/X.svg'
@@ -12,28 +12,8 @@ function Goal() {
   const navigate = useNavigate()
   const location = useLocation()
   const [goal, setGoal] = useState('')
-  const [viewportHeight, setViewportHeight] = useState(
-    window.visualViewport?.height ?? window.innerHeight,
-  )
   const { returnTo = '/mission/step1', storageKey = 'step1PersonalMissionsV2' } =
     (location.state as GoalLocationState | null) ?? {}
-
-  useEffect(() => {
-    const viewport = window.visualViewport
-
-    const updateViewportHeight = () => {
-      setViewportHeight(viewport?.height ?? window.innerHeight)
-    }
-
-    updateViewportHeight()
-    viewport?.addEventListener('resize', updateViewportHeight)
-    window.addEventListener('resize', updateViewportHeight)
-
-    return () => {
-      viewport?.removeEventListener('resize', updateViewportHeight)
-      window.removeEventListener('resize', updateViewportHeight)
-    }
-  }, [])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -62,20 +42,17 @@ function Goal() {
   }
 
   return (
-    <section
-      className="group relative max-h-full overflow-hidden bg-[var(--gray-00,#FFF)] px-[15px]"
-      style={{ height: viewportHeight }}
-    >
+    <section className="relative h-full overflow-hidden bg-[var(--gray-00,#FFF)] px-[15px]">
       <button
         type="button"
         aria-label="목표 설정 닫기"
         className="absolute top-[57px] right-[15px] flex size-[15px] cursor-pointer items-center justify-center border-0 bg-transparent p-0"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate(returnTo, { replace: true })}
       >
         <img src={closeIcon} alt="" aria-hidden="true" className="size-[15px]" />
       </button>
 
-      <form className="relative h-full pt-[153px]" onSubmit={handleSubmit}>
+      <form className="pt-[153px]" onSubmit={handleSubmit}>
         <div className="ml-[15px]">
           <label
             htmlFor="personal-goal"
@@ -99,7 +76,7 @@ function Goal() {
         <button
           type="submit"
           disabled={!goal.trim()}
-          className="mx-auto mt-[164px] flex h-[40px] w-[160px] cursor-pointer items-center justify-center gap-[10px] rounded-[20px] border-0 bg-linear-to-r from-[#FFB8B8] to-[#FFB89F] px-0 py-3 font-[Pretendard] text-[18px] leading-none font-semibold tracking-[-0.45px] text-[var(--color-gray-10,#F8F8F8)] shadow-[0_0_8px_0_#FFB8B8] disabled:cursor-not-allowed disabled:opacity-50 group-focus-within:absolute group-focus-within:bottom-6 group-focus-within:left-1/2 group-focus-within:mt-0 group-focus-within:-translate-x-1/2"
+          className="mx-auto mt-[164px] flex h-[40px] w-[160px] cursor-pointer items-center justify-center gap-[10px] rounded-[20px] border-0 bg-linear-to-r from-[#FFB8B8] to-[#FFB89F] px-0 py-3 font-[Pretendard] text-[18px] leading-none font-semibold tracking-[-0.45px] text-[var(--color-gray-10,#F8F8F8)] shadow-[0_0_8px_0_#FFB8B8] disabled:cursor-not-allowed disabled:opacity-50"
         >
           저장
         </button>
