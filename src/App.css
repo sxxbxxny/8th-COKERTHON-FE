@@ -1381,7 +1381,7 @@
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  padding: 101px 7px 40px;
+  padding: 101px 7px 50px;
   background: linear-gradient(180deg, #ffe8e1 0%, #fff6eb 100%);
   color: var(--gray-100, #171717);
   font-family: Pretendard, system-ui, sans-serif;
