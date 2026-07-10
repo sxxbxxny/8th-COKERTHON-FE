@@ -279,7 +279,7 @@ function Step1() {
         </section>
       </main>
 
-      <MissionBottomNav activeTab="mission" missionPath="/mission/step1" />
+      <MissionBottomNav activeTab="mission" missionPath="/mission/step1" myPath="/my/step1" />
     </section>
   )
 }

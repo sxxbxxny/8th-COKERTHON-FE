@@ -1,12 +1,15 @@
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { getMissionProgress } from '../../apis/missions'
 import MissionBottomNav from '../../components/MissionBottomNav'
+import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
 
 type LocationState = {
   missionPath?: string
 }
 
 const stampPositions = [
-    { left: '92%', top: '5%' },
+  { left: '92%', top: '5%' },
   { left: '71.5%', top: '10.5%' },
   { left: '46.5%', top: '15%' },
   { left: '25%', top: '18.5%' },
@@ -22,15 +25,47 @@ const stampPositions = [
   { left: '60%', top: '88%' },
 ]
 
-const completedStampCount = 10
-
 function MyStep1() {
   const location = useLocation()
+  const memberCount = useTrackMemberCount('이불 밖으로 한 걸음')
+  const [progress, setProgress] = useState({
+    requiredDays: stampPositions.length,
+    completedDays: 0,
+  })
   const missionPath =
     typeof (location.state as LocationState | null)?.missionPath === 'string'
       ? (location.state as LocationState).missionPath
       : '/mission/step1'
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken')
+    if (!accessToken) return
+
+    let isCancelled = false
+
+    getMissionProgress(accessToken)
+      .then((response) => {
+        if (isCancelled) return
+
+        setProgress({
+          requiredDays: response.result.requiredDays,
+          completedDays: response.result.completedDays,
+        })
+      })
+      .catch(() => {
+        if (isCancelled) return
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
+
+  const completedStampCount = Math.min(
+    Math.max(progress.completedDays, 0),
+    stampPositions.length,
+  )
+  const remainingDays = Math.max(progress.requiredDays - progress.completedDays, 0)
   const isFootstepCompleted =
     completedStampCount === stampPositions.length
 
@@ -39,7 +74,7 @@ function MyStep1() {
       <header className="my-page-header">
         <div>
           <h1>이불 밖으로 한 걸음</h1>
-          <p>지금 00걸음 함께 하고 있어요</p>
+          <p>지금 {memberCount ?? '00'}명이 함께 하고 있어요</p>
         </div>
 
         <img
@@ -52,7 +87,7 @@ function MyStep1() {
       <main className="my-stamp-screen">
         <div className="my-stamp-heading">
           <h2>미션 수행 스탬프</h2>
-          <p>다음 단계까지 3개 남았어요</p>
+          <p>다음 단계까지 {remainingDays}개 남았어요</p>
         </div>
 
         <div
@@ -108,6 +143,7 @@ function MyStep1() {
       <MissionBottomNav
         activeTab="my"
         missionPath={missionPath}
+        myPath="/my/step1"
       />
     </section>
   )
