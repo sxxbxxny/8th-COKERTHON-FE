@@ -12,6 +12,7 @@ const missions = [
 
 const personalMissionsStorageKey = 'step3PersonalMissionsV2'
 const completedMissionsStorageKey = 'step3CompletedMissionsV1'
+const completedPersonalMissionsStorageKey = 'step3CompletedPersonalMissionsV1'
 
 const getPersonalMissions = () => {
   const storedMissions = localStorage.getItem(personalMissionsStorageKey)
@@ -55,6 +56,26 @@ const storeCompletedMissions = (missionIds: Set<number>) => {
   localStorage.setItem(completedMissionsStorageKey, JSON.stringify(Array.from(missionIds)))
 }
 
+const getStoredCompletedPersonalMissions = () => {
+  const storedMissionTitles = localStorage.getItem(completedPersonalMissionsStorageKey)
+
+  if (!storedMissionTitles) return new Set<string>()
+
+  try {
+    const parsedMissionTitles = JSON.parse(storedMissionTitles)
+
+    if (Array.isArray(parsedMissionTitles)) {
+      return new Set(
+        parsedMissionTitles.filter((title): title is string => typeof title === 'string'),
+      )
+    }
+  } catch {
+    return new Set<string>()
+  }
+
+  return new Set<string>()
+}
+
 function Step3() {
   const navigate = useNavigate()
   const memberCount = useTrackMemberCount('관계를 향한 한 걸음')
@@ -62,11 +83,23 @@ function Step3() {
   const [submittingMissions, setSubmittingMissions] = useState<Set<number>>(new Set())
   const [missionError, setMissionError] = useState('')
   const [personalMissions] = useState(getPersonalMissions)
-  const [completedPersonalMissions, setCompletedPersonalMissions] = useState<Set<string>>(new Set())
+  const [completedPersonalMissions, setCompletedPersonalMissions] =
+    useState<Set<string>>(getStoredCompletedPersonalMissions)
   const totalMissionCount = missions.length + personalMissions.length
   const completedMissionCount = completedMissions.size + completedPersonalMissions.size
   const isAllMissionsCompleted =
     totalMissionCount > 0 && completedMissionCount === totalMissionCount
+
+  useEffect(() => {
+    storeCompletedMissions(completedMissions)
+  }, [completedMissions])
+
+  useEffect(() => {
+    localStorage.setItem(
+      completedPersonalMissionsStorageKey,
+      JSON.stringify(Array.from(completedPersonalMissions)),
+    )
+  }, [completedPersonalMissions])
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
