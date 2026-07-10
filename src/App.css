@@ -1452,3 +1452,10 @@
     width: min(330px, 92vw);
   }
 }
+.mission-api-error {
+  margin: 8px 0 0;
+  color: var(--P-60, #db8774);
+  font-size: 13px;
+  line-height: 140%;
+  text-align: left;
+}
