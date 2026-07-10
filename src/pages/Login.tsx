@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { login } from '../apis/auth'
+import { getMyTrack } from '../apis/tracks'
 import Button from '../components/Button'
+import { getMissionPathByTrackName } from '../utils/tracks'
 
 type LoginProps = {
   onMoveToSignup: () => void
-  onLoginSuccess: () => void
+  onLoginSuccess: (path: string) => void
 }
 
 function Login({ onMoveToSignup, onLoginSuccess }: LoginProps) {
@@ -24,7 +26,13 @@ function Login({ onMoveToSignup, onLoginSuccess }: LoginProps) {
       const response = await login({ email, password })
       localStorage.setItem('accessToken', response.result.accessToken)
       localStorage.setItem('refreshToken', response.result.refreshToken)
-      onLoginSuccess()
+
+      try {
+        const myTrackResponse = await getMyTrack()
+        onLoginSuccess(getMissionPathByTrackName(myTrackResponse.result.trackName) ?? '/mvp1')
+      } catch {
+        onLoginSuccess('/mvp1')
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '로그인 실패')
     } finally {

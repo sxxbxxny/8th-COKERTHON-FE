@@ -27,7 +27,7 @@ function App() {
         element={
           <Login
             onMoveToSignup={() => navigate('/signup')}
-            onLoginSuccess={() => navigate('/mvp1', { replace: true })}
+            onLoginSuccess={(path) => navigate(path, { replace: true })}
           />
         }
       />

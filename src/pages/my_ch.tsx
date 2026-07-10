@@ -1,9 +1,14 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { ApiError } from '../apis/client'
+import { assignOnboardingTrack, getMyTrack } from '../apis/tracks'
 import Button from '../components/Button'
 import { useTrackMemberCount, type TrackTitle } from '../hooks/useTrackMemberCount'
-
-type Difficulty = 'move' | 'outside' | 'people'
+import {
+  getMissionPathByTrackName,
+  trackTypeByDifficulty,
+  type Difficulty,
+} from '../utils/tracks'
 
 type LocationState = {
   difficulty?: string
@@ -56,6 +61,8 @@ const isDifficulty = (value: string | undefined): value is Difficulty =>
 function MyCh() {
   const navigate = useNavigate()
   const { state } = useLocation()
+  const [message, setMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const selectedDifficulty = useMemo(() => {
     const stateDifficulty = (state as LocationState | null)?.difficulty
@@ -75,6 +82,33 @@ function MyCh() {
 
   const challenge = challengeByDifficulty[selectedDifficulty]
   const memberCount = useTrackMemberCount(challenge.title)
+
+  const moveToMission = async () => {
+    setMessage('')
+    setIsSubmitting(true)
+
+    try {
+      const response = await assignOnboardingTrack({
+        trackType: trackTypeByDifficulty[selectedDifficulty],
+      })
+      navigate(getMissionPathByTrackName(response.result.trackName) ?? challenge.missionPath)
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
+        try {
+          const response = await getMyTrack()
+          navigate(getMissionPathByTrackName(response.result.trackName) ?? challenge.missionPath)
+          return
+        } catch {
+          navigate(challenge.missionPath)
+          return
+        }
+      }
+
+      setMessage(error instanceof Error ? error.message : '트랙 배정에 실패했습니다.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <main
@@ -111,8 +145,13 @@ function MyCh() {
       </div>
 
       <footer className="relative z-10 shrink-0 pt-4 pb-[max(50px,env(safe-area-inset-bottom))]">
-        <Button className="mx-auto" onClick={() => navigate(challenge.missionPath)}>
-          시작하기
+        {message && (
+          <p className="mx-auto mb-3 w-[300px] text-center font-[Pretendard] text-[14px] leading-[140%] font-normal text-[var(--P-60,#DB8774)]">
+            {message}
+          </p>
+        )}
+        <Button className="mx-auto" disabled={isSubmitting} onClick={moveToMission}>
+          {isSubmitting ? '배정 중...' : '시작하기'}
         </Button>
       </footer>
     </main>
