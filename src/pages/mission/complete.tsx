@@ -72,12 +72,6 @@ function Complete() {
             <br />
             너무 수고 많았어요.
           </p>
-          <img
-            className="mission-goal-character"
-            src="/src/assets/캐릭터 1 1.svg"
-            alt=""
-            aria-hidden="true"
-          />
         </div>
       </main>
 
