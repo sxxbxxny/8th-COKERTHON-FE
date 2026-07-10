@@ -70,7 +70,7 @@ function Step2() {
     <section className="mission-step-page">
       <div className="mission-step-hero">
         <div className="mission-step-copy">
-          <h1>이불 밖으로 한 걸음</h1>
+          <h1>문 밖으로 한 걸음</h1>
           <p>지금 00명이 함께 하고 있어요</p>
         </div>
       </div>
