@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { signup } from '../apis/auth'
+import Button from '../components/Button'
 
 type SignupProps = {
   onMoveToLogin: () => void
@@ -13,6 +14,8 @@ function Signup({ onMoveToLogin }: SignupProps) {
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const [isPasswordConfirmVisible, setIsPasswordConfirmVisible] = useState(false)
 
   const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -36,70 +39,101 @@ function Signup({ onMoveToLogin }: SignupProps) {
   }
 
   return (
-    <section className="auth-page">
-      <h1>회원가입</h1>
-      <form onSubmit={handleSignup}>
-        <label>
-          이메일
+    <section className="signup-page">
+      <header className="signup-header">
+        <button type="button" aria-label="로그인으로 돌아가기" onClick={onMoveToLogin}>
+          <img src="/images/vector-19.svg" alt="" aria-hidden="true" />
+        </button>
+        <h1>이메일로 회원가입하기</h1>
+      </header>
+
+      <form className="signup-form" onSubmit={handleSignup}>
+        <label className="signup-field">
+          <span>가입할 이메일 입력해주세요</span>
           <input
             type="email"
             name="email"
             autoComplete="email"
+            placeholder="user@example.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
           />
         </label>
 
-        <label>
-          비밀번호
-          <input
-            type="password"
-            name="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
+        <label className="signup-field">
+          <span>비밀번호를 설정해주세요</span>
+          <div className="signup-password-input">
+            <input
+              type={isPasswordVisible ? 'text' : 'password'}
+              name="password"
+              autoComplete="new-password"
+              placeholder="************"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+            <button
+              type="button"
+              aria-label={isPasswordVisible ? '비밀번호 숨기기' : '비밀번호 보기'}
+              onClick={() => setIsPasswordVisible((current) => !current)}
+            >
+              <img
+                src={isPasswordVisible ? '/eye.svg' : '/closeeye.svg'}
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         </label>
 
-        <label>
-          비밀번호 확인
-          <input
-            type="password"
-            name="passwordConfirm"
-            autoComplete="new-password"
-            value={passwordConfirm}
-            onChange={(event) => setPasswordConfirm(event.target.value)}
-            required
-          />
+        <label className="signup-field">
+          <span>비밀번호를 한번 더 입력해주세요</span>
+          <div className="signup-password-input">
+            <input
+              type={isPasswordConfirmVisible ? 'text' : 'password'}
+              name="passwordConfirm"
+              autoComplete="new-password"
+              placeholder="************"
+              value={passwordConfirm}
+              onChange={(event) => setPasswordConfirm(event.target.value)}
+              required
+            />
+            <button
+              type="button"
+              aria-label={
+                isPasswordConfirmVisible ? '비밀번호 확인 숨기기' : '비밀번호 확인 보기'
+              }
+              onClick={() => setIsPasswordConfirmVisible((current) => !current)}
+            >
+              <img
+                src={isPasswordConfirmVisible ? '/eye.svg' : '/closeeye.svg'}
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         </label>
 
-        <label>
-          이름
+        <label className="signup-field">
+          <span>이름을 입력해주세요</span>
           <input
             type="text"
             name="name"
             autoComplete="name"
+            placeholder="이름"
             value={name}
             onChange={(event) => setName(event.target.value)}
             required
           />
         </label>
 
-        <button type="submit" disabled={isSubmitting}>
-          회원가입
-        </button>
+        {message && <p className="signup-message">{message}</p>}
+
+        <Button className="signup-submit" type="submit" disabled={isSubmitting}>
+          다음
+        </Button>
       </form>
-
-      {message && <p>{message}</p>}
-
-      <p className="auth-link">
-        이미 계정이 있으신가요?
-        <button type="button" onClick={onMoveToLogin}>
-          로그인
-        </button>
-      </p>
     </section>
   )
 }

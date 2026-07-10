@@ -44,7 +44,10 @@
   --gray-80: #555;
   --gray-90: #373737;
   --gray-100: #171717;
+  --color-gray-00: var(--gray-00);
   --color-gray-10: var(--gray-10);
+  --color-gray-20: var(--gray-20);
+  --color-gray-90: var(--gray-90);
 
   --text: var(--gray-70);
   --text-h: var(--gray-100);
@@ -95,7 +98,7 @@
 
 #root {
   width: 390px;
-  height: 844px;
+  height: 804px;
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid var(--border);
