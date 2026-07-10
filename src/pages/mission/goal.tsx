@@ -1,74 +1,93 @@
-import { type FormEvent, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-
-const defaultPersonalMissionsStorageKey = 'step1PersonalMissionsV2'
-
-const getPersonalMissions = (storageKey = defaultPersonalMissionsStorageKey) => {
-  const storedMissions = localStorage.getItem(storageKey)
-
-  if (storedMissions) {
-    try {
-      const parsedMissions = JSON.parse(storedMissions)
-
-      if (Array.isArray(parsedMissions)) {
-        return parsedMissions.filter((mission): mission is string => typeof mission === 'string')
-      }
-    } catch {
-      return []
-    }
-  }
-
-  return []
-}
+import { useEffect, useRef, useState } from 'react'
 
 function Goal() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [mission, setMission] = useState('')
-  const returnTo =
-    typeof location.state === 'object' &&
-    location.state !== null &&
-    'returnTo' in location.state &&
-    typeof location.state.returnTo === 'string'
-      ? location.state.returnTo
-      : '/mission/step1'
-  const storageKey =
-    typeof location.state === 'object' &&
-    location.state !== null &&
-    'storageKey' in location.state &&
-    typeof location.state.storageKey === 'string'
-      ? location.state.storageKey
-      : defaultPersonalMissionsStorageKey
+  const [isMessageInputOpen, setIsMessageInputOpen] = useState(false)
+  const [message, setMessage] = useState('')
+  const messageInputRef = useRef<HTMLInputElement>(null)
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const nextMission = mission.trim()
+  useEffect(() => {
+    if (!isMessageInputOpen) return
 
-    if (!nextMission) {
-      return
-    }
+    messageInputRef.current?.focus()
+  }, [isMessageInputOpen])
 
-    const personalMissions = [...getPersonalMissions(storageKey), nextMission]
-    localStorage.setItem(storageKey, JSON.stringify(personalMissions))
-    navigate(returnTo)
+  if (isMessageInputOpen) {
+    return (
+      <section className="mission-goal-input-page">
+
+        <main className="mission-goal-input-panel">
+          <button
+            className="mission-goal-input-close"
+            type="button"
+            aria-label="응원 메시지 입력 닫기"
+            onClick={() => setIsMessageInputOpen(false)}
+          >
+            <img src="/src/assets/X.svg" alt="" aria-hidden="true" />
+          </button>
+
+          <div className="mission-goal-input-copy">
+            <p>
+              아직 미션 수행 중인 팀원들에게
+              <br />
+              응원 메시지를 작성해주세요!
+            </p>
+
+            <input
+              ref={messageInputRef}
+              value={message}
+              placeholder="오늘도 힘내세요!"
+              onChange={(event) => setMessage(event.target.value)}
+            />
+          </div>
+
+          <button className="mission-goal-input-submit" type="button">
+            전송하기
+          </button>
+        </main>
+      </section>
+    )
   }
 
   return (
-    <main className="mission-goal-page">
-      <form className="mission-goal-form" onSubmit={handleSubmit}>
-        <label htmlFor="personal-mission-input">나의 미션</label>
+    <section className="mission-goal-page">
+      <button className="mission-goal-back" type="button" aria-label="뒤로가기">
+        <img src="/src/assets/GoBack.svg" alt="" aria-hidden="true" />
+      </button>
+
+      <main className="mission-goal-content">
+        <div className="mission-goal-message">
+          <h1>
+            오늘의 목표를
+            <br />
+            다 이뤘어요
+          </h1>
+          <p>
+            오늘도 한걸음 더 나아간 당신!
+            <br />
+            너무 수고 많았어요.
+          </p>
+          <img
+            className="mission-goal-character"
+            src="/src/assets/캐릭터 1 1.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </div>
+      </main>
+
+      <footer className="mission-goal-footer">
+        <p>
+          아직 미션 수행 중인 팀원들에게
+          <br />
+          응원 메시지 한 줄 어때요?
+        </p>
         <input
-          id="personal-mission-input"
-          value={mission}
-          onChange={(event) => setMission(event.target.value)}
-          placeholder="오늘의 작은 미션을 입력하세요"
-          autoFocus
+          aria-label="응원 메시지"
+          placeholder="응원 메시지를 작성해주세요"
+          onFocus={() => setIsMessageInputOpen(true)}
         />
-        <button type="submit" disabled={!mission.trim()}>
-          등록하기
-        </button>
-      </form>
-    </main>
+      </footer>
+    </section>
   )
 }
 
