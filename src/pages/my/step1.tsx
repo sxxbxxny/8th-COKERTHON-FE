@@ -6,6 +6,7 @@ type LocationState = {
 }
 
 const stampPositions = [
+    { left: '92%', top: '5%' },
   { left: '71.5%', top: '10.5%' },
   { left: '46.5%', top: '15%' },
   { left: '25%', top: '18.5%' },
