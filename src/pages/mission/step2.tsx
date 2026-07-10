@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import MissionBottomNav from '../../components/MissionBottomNav'
 
 const missions = [
-  { title: '집 앞 5분 걷기', reward: '10장 수줍음' },
+  { title: '집 앞 5분 걷기', reward: '00명 수행 중' },
 ]
 
 const personalMissionsStorageKey = 'step2PersonalMissionsV2'

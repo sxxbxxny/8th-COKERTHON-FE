@@ -114,9 +114,8 @@
 #root {
   width: 100%;
   max-width: 390px;
-  height: min(804px, 100dvh);
   width: 390px;
-  height: 804px;
+  height: 800px;
   margin: 0 auto;
   text-align: center;
   display: flex;

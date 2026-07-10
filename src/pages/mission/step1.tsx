@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import MissionBottomNav from '../../components/MissionBottomNav'
 
 const missions = [
-  { title: '물 한 잔 마시기', reward: '10장 수줍음' },
-  { title: '창문 열고 10분 환기하기', reward: '10장 수줍음' },
-  { title: '내 공간 5분 정리하기', reward: '10장 수줍음' },
-  { title: '햇빛 5분 쬐기', reward: '10장 수줍음' },
+  { title: '물 한 잔 마시기', reward: '00명 수행 중' },
+  { title: '창문 열고 10분 환기하기', reward: '00명 수행 중' },
+  { title: '내 공간 5분 정리하기', reward: '00명 수행 중' },
+  { title: '햇빛 5분 쬐기', reward: '00명 수행 중' },
 ]
 
 const personalMissionsStorageKey = 'step1PersonalMissionsV2'
@@ -79,7 +79,7 @@ function Step1() {
       </div>
 
       <main className="mission-step-content">
-        <div className="mission-gradient-panel">
+        <div className="mission-gradient-panel mission-gradient-panel-step1">
           <div className="mission-status-pill">오늘도 화이팅하세요 :)</div>
         </div>
 
