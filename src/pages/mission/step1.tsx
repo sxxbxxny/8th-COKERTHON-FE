@@ -9,9 +9,9 @@ type StepLocationState = {
 }
 
 const missions = [
-  { id: 1, title: '물 한 잔 마시기', reward: '00명 수행 중' },
-  { id: 2, title: '창문 열고 10분 환기하기', reward: '00명 수행 중' },
-  { id: 3, title: '내 공간 5분 정리하기', reward: '00명 수행 중' },
+  { id: 1, title: '물 한 잔 마시기', reward: '' },
+  { id: 2, title: '창문 열고 10분 환기하기', reward: '' },
+  { id: 3, title: '내 공간 5분 정리하기', reward: '' },
 ]
 
 const personalMissionsStorageKey = 'step1PersonalMissionsV2'
