@@ -16,7 +16,12 @@ function App() {
       />
       <Route
         path="/signup"
-        element={<Signup onMoveToLogin={() => navigate('/login')} />}
+        element={
+          <Signup
+            onMoveToLogin={() => navigate('/login')}
+            onSignupSuccess={() => navigate('/mvp1', { replace: true })}
+          />
+        }
       />
       <Route path="/mvp1" element={<Mvp1 />} />
       <Route path="*" element={<Navigate to="/login" replace />} />

@@ -4,9 +4,10 @@ import { signup } from '../apis/auth'
 
 type SignupProps = {
   onMoveToLogin: () => void
+  onSignupSuccess: () => void
 }
 
-function Signup({ onMoveToLogin }: SignupProps) {
+function Signup({ onMoveToLogin, onSignupSuccess }: SignupProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
@@ -27,7 +28,7 @@ function Signup({ onMoveToLogin }: SignupProps) {
 
     try {
       await signup({ email, password, name })
-      setMessage('회원가입 성공')
+      onSignupSuccess()
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '회원가입 실패')
     } finally {
