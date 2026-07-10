@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { completeMission, extractCompletedMissionIds, getTodayMissions } from '../../apis/missions'
 import MissionBottomNav from '../../components/MissionBottomNav'
+import { useLatestCheer } from '../../hooks/useLatestCheer'
 import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
 
+type StepLocationState = {
+  restoreCompleted?: boolean
+}
+
 const missions = [
-  { id: 4, title: '집 앞 5분 걷기', reward: '00명 수행 중' },
-  { id: 5, title: '햇빛 10분 쬐기', reward: '00명 수행 중' },
-  { id: 6, title: '샤워하기', reward: '00명 수행 중' },
+  { id: 4, title: '집 앞 5분 걷기', reward: '' },
+  { id: 5, title: '햇빛 10분 쬐기', reward: '' },
+  { id: 6, title: '샤워하기', reward: '' },
 ]
 
 const personalMissionsStorageKey = 'step2PersonalMissionsV2'
@@ -78,8 +83,24 @@ const getStoredCompletedPersonalMissions = () => {
 
 function Step2() {
   const navigate = useNavigate()
+  const { state } = useLocation()
   const memberCount = useTrackMemberCount('문 밖으로 한 걸음')
-  const [completedMissions, setCompletedMissions] = useState<Set<number>>(getStoredCompletedMissions)
+  const cheerMessage = useLatestCheer()
+  const shouldRestoreCompleted =
+    (state as StepLocationState | null)?.restoreCompleted === true
+  const [personalMissions] = useState(getPersonalMissions)
+  const [completedMissions, setCompletedMissions] = useState<Set<number>>(() => {
+    if (shouldRestoreCompleted) {
+      const restoredMissions = new Set(missions.map((mission) => mission.id))
+      storeCompletedMissions(restoredMissions)
+      return restoredMissions
+    }
+
+    return getStoredCompletedMissions()
+  })
+  const [completedPersonalMissions, setCompletedPersonalMissions] = useState<Set<string>>(
+    () => new Set(shouldRestoreCompleted ? personalMissions : []),
+  )
   const [submittingMissions, setSubmittingMissions] = useState<Set<number>>(new Set())
   const [missionError, setMissionError] = useState('')
   const [personalMissions] = useState(getPersonalMissions)
@@ -103,7 +124,7 @@ function Step2() {
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
-    if (!accessToken) return
+    if (!accessToken || shouldRestoreCompleted) return
 
     let isMounted = true
     const visibleMissionIds = new Set(missions.map((mission) => mission.id))
@@ -129,12 +150,17 @@ function Step2() {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [shouldRestoreCompleted])
 
   const moveToGoal = () => {
     navigate('/mission/goal', {
       state: { returnTo: '/mission/step2', storageKey: personalMissionsStorageKey },
     })
+  }
+
+  const moveToComplete = () => {
+    localStorage.setItem('lastCompletedMissionStep', String(missionStep))
+    navigate('/mission/complete', { replace: true, state: { step: missionStep } })
   }
 
   const handleMissionComplete = async (missionId: number) => {
@@ -151,11 +177,17 @@ function Step2() {
 
     try {
       await completeMission(missionId, accessToken)
-      setCompletedMissions((prev) => {
-        const next = new Set(prev).add(missionId)
-        storeCompletedMissions(next)
-        return next
-      })
+
+      const nextCompletedMissions = new Set(completedMissions).add(missionId)
+      setCompletedMissions(nextCompletedMissions)
+      storeCompletedMissions(nextCompletedMissions)
+
+      if (
+        totalMissionCount > 0 &&
+        nextCompletedMissions.size + completedPersonalMissions.size === totalMissionCount
+      ) {
+        moveToComplete()
+      }
     } catch (error) {
       setMissionError(
         error instanceof Error ? error.message : '미션 완료 처리에 실패했습니다.',
@@ -170,17 +202,22 @@ function Step2() {
   }
 
   const togglePersonalMission = (title: string) => {
-    setCompletedPersonalMissions((prev) => {
-      const next = new Set(prev)
+    const nextCompletedPersonalMissions = new Set(completedPersonalMissions)
 
-      if (next.has(title)) {
-        next.delete(title)
-      } else {
-        next.add(title)
-      }
+    if (nextCompletedPersonalMissions.has(title)) {
+      nextCompletedPersonalMissions.delete(title)
+    } else {
+      nextCompletedPersonalMissions.add(title)
+    }
 
-      return next
-    })
+    setCompletedPersonalMissions(nextCompletedPersonalMissions)
+
+    if (
+      totalMissionCount > 0 &&
+      completedMissions.size + nextCompletedPersonalMissions.size === totalMissionCount
+    ) {
+      moveToComplete()
+    }
   }
 
   return (
@@ -203,7 +240,7 @@ function Step2() {
           {isAllMissionsCompleted && (
             <img className="mission-step-image mission-step-image-flag-step2" src="/images/flag.svg" alt="" />
           )}
-          <div className="mission-status-pill">오늘도 화이팅하세요 :)</div>
+          <div className="mission-status-pill">{cheerMessage}</div>
         </div>
 
         <section className="mission-list-section" aria-labelledby="today-mission-title">
