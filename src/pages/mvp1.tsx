@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ApiError } from '../apis/client'
+import { assignOnboardingTrack, getMyTrack } from '../apis/tracks'
 import Button from '../components/Button'
 import Radio from '../components/Radio'
+import { trackTypeByDifficulty, type Difficulty } from '../utils/tracks'
 
 const difficultyOptions = [
   { value: 'move', label: '한 발자국 움직이는 것' },
@@ -11,13 +14,37 @@ const difficultyOptions = [
 
 function Mvp1() {
   const navigate = useNavigate()
-  const [difficulty, setDifficulty] = useState('')
+  const [difficulty, setDifficulty] = useState<Difficulty | ''>('')
+  const [message, setMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const moveToMyChallenge = () => {
-    if (!difficulty) return
+  const moveToMyChallenge = async () => {
+    if (!difficulty || isSubmitting) return
 
+    setMessage('')
+    setIsSubmitting(true)
     localStorage.setItem('selectedDifficulty', difficulty)
-    navigate('/my_ch', { state: { difficulty } })
+
+    try {
+      const response = await assignOnboardingTrack({
+        trackType: trackTypeByDifficulty[difficulty],
+      })
+      navigate('/my_ch', { state: { difficulty, memberCount: response.result.memberCount } })
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
+        try {
+          const response = await getMyTrack()
+          navigate('/my_ch', { state: { difficulty, memberCount: response.result.memberCount } })
+        } catch {
+          navigate('/my_ch', { state: { difficulty } })
+        }
+        return
+      }
+
+      setMessage(error instanceof Error ? error.message : '트랙 저장에 실패했습니다.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -46,12 +73,17 @@ function Mvp1() {
       </div>
 
       <footer className="relative z-10 shrink-0 pt-4 pb-[max(50px,env(safe-area-inset-bottom))]">
+        {message && (
+          <p className="mx-auto mb-3 w-[300px] text-center font-[Pretendard] text-[14px] leading-[140%] font-normal text-[var(--P-60,#DB8774)]">
+            {message}
+          </p>
+        )}
         <Button
           className="mx-auto"
-          disabled={!difficulty}
+          disabled={!difficulty || isSubmitting}
           onClick={moveToMyChallenge}
         >
-          다음
+          {isSubmitting ? '저장 중...' : '다음'}
         </Button>
       </footer>
     </main>

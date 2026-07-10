@@ -12,6 +12,7 @@ import {
 
 type LocationState = {
   difficulty?: string
+  memberCount?: number
 }
 
 const challengeByDifficulty: Record<
@@ -61,12 +62,15 @@ const isDifficulty = (value: string | undefined): value is Difficulty =>
 function MyCh() {
   const navigate = useNavigate()
   const { state } = useLocation()
+  const locationState = state as LocationState | null
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [memberCount, setMemberCount] = useState<number | null>(null)
+  const [memberCount, setMemberCount] = useState<number | null>(
+    typeof locationState?.memberCount === 'number' ? locationState.memberCount : null,
+  )
 
   const selectedDifficulty = useMemo(() => {
-    const stateDifficulty = (state as LocationState | null)?.difficulty
+    const stateDifficulty = locationState?.difficulty
 
     if (isDifficulty(stateDifficulty)) {
       return stateDifficulty
@@ -79,7 +83,7 @@ function MyCh() {
     }
 
     return 'move'
-  }, [state])
+  }, [locationState])
 
   const challenge = challengeByDifficulty[selectedDifficulty]
 
