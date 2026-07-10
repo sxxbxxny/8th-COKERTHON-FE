@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ApiError } from '../apis/client'
 import { assignOnboardingTrack, getMyTrack } from '../apis/tracks'
 import Button from '../components/Button'
-import { useTrackMemberCount, type TrackTitle } from '../hooks/useTrackMemberCount'
+import type { TrackTitle } from '../hooks/useTrackMemberCount'
 import {
   getMissionPathByTrackName,
   trackTypeByDifficulty,
@@ -63,6 +63,7 @@ function MyCh() {
   const { state } = useLocation()
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [memberCount, setMemberCount] = useState<number | null>(null)
 
   const selectedDifficulty = useMemo(() => {
     const stateDifficulty = (state as LocationState | null)?.difficulty
@@ -81,7 +82,29 @@ function MyCh() {
   }, [state])
 
   const challenge = challengeByDifficulty[selectedDifficulty]
-  const memberCount = useTrackMemberCount(challenge.title)
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken')
+    if (!accessToken) return
+
+    let isCancelled = false
+
+    getMyTrack()
+      .then((response) => {
+        if (isCancelled) return
+
+        setMemberCount(response.result.memberCount)
+      })
+      .catch(() => {
+        if (isCancelled) return
+
+        setMemberCount(null)
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
 
   const moveToMission = async () => {
     setMessage('')
