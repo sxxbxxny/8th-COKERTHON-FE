@@ -1223,3 +1223,119 @@
   letter-spacing: 0;
   cursor: pointer;
 }
+.my-page-header {
+  display: flex;
+  height: 128px;
+  align-items: flex-end;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 0 16px 18px;
+  background: var(--P-10, #fff6eb);
+}
+
+.my-page-header h1 {
+  margin: 0 0 5px;
+  color: #171717;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.45px;
+}
+
+.my-page-header p {
+  margin: 0;
+  color: var(--P-60, #db8774);
+  font-size: 12px;
+  line-height: 140%;
+  letter-spacing: -0.3px;
+}
+
+.my-page-header img {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.my-stamp-screen {
+  height: calc(100% - 128px);
+  box-sizing: border-box;
+  padding-top: 37px;
+  background: linear-gradient(180deg, #fff 0%, #fff 38%, #fff8ef 72%, #ffe8e0 100%);
+}
+
+.my-stamp-heading {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.my-stamp-heading h2 {
+  margin: 0 0 5px;
+  color: #171717;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.35px;
+}
+
+.my-stamp-heading p {
+  margin: 0;
+  color: var(--P-50, #ffb89f);
+  font-size: 10px;
+  line-height: 140%;
+  letter-spacing: -0.25px;
+}
+
+.my-stamp-route {
+  position: relative;
+  width: min(364px, 94vw);
+  height: min(431px, calc(100% - 45px));
+  margin: -1px auto 0;
+}
+
+.my-stamp-path {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.my-stamp-check {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+}
+
+.my-stamp-next {
+  position: absolute;
+  right: -1%;
+  bottom: -5%;
+  width: 94px;
+  height: 94px;
+}
+
+.my-stamp-character {
+  position: absolute;
+  left: -1%;
+  bottom: -13%;
+  width: 150px;
+  height: 99px;
+}
+
+@media (max-height: 700px) {
+  .my-page-header {
+    height: 105px;
+    padding-bottom: 12px;
+  }
+
+  .my-stamp-screen {
+    height: calc(100% - 105px);
+    padding-top: 24px;
+  }
+
+  .my-stamp-route {
+    width: min(330px, 92vw);
+  }
+}
