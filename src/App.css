@@ -1383,6 +1383,20 @@
   letter-spacing: -0.35px;
 }
 
+.my-complete3-actions {
+  display: flex;
+  width: 100%;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.my-complete3-finish {
+  background: var(--gray-30, #e6e6e6) !important;
+  box-shadow: none !important;
+  color: var(--gray-00, #fff) !important;
+}
+
 @media (max-height: 650px) {
   .my-complete1-page {
     padding-top: 72px;
