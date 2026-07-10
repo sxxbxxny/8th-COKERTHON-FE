@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { completeMission, extractCompletedMissionIds, getTodayMissions } from '../../apis/missions'
 import MissionBottomNav from '../../components/MissionBottomNav'
+import { useLatestCheer } from '../../hooks/useLatestCheer'
 import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
 
 type StepLocationState = {
@@ -64,6 +65,7 @@ function Step2() {
   const navigate = useNavigate()
   const { state } = useLocation()
   const memberCount = useTrackMemberCount('문 밖으로 한 걸음')
+  const cheerMessage = useLatestCheer()
   const shouldRestoreCompleted =
     (state as StepLocationState | null)?.restoreCompleted === true
   const [personalMissions] = useState(getPersonalMissions)
@@ -204,7 +206,7 @@ function Step2() {
           {isAllMissionsCompleted && (
             <img className="mission-step-image mission-step-image-flag-step2" src="/images/flag.svg" alt="" />
           )}
-          <div className="mission-status-pill">오늘도 화이팅하세요 :)</div>
+          <div className="mission-status-pill">{cheerMessage}</div>
         </div>
 
         <section className="mission-list-section" aria-labelledby="today-mission-title">
