@@ -1,13 +1,41 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  --P-10: #fff6eb;
+  --P-20: #ffead8;
+  --P-30: #ffdcc5;
+  --P-40: #ffceb7;
+  --P-50: #ffb89f;
+  --P-60: #db8774;
+  --P-70: #b75c50;
+  --P-80: #933732;
+  --P-90: #7a1e20;
+
+  --s-10: #fff5f0;
+  --s-20: #ffe9e2;
+  --s-30: #ffdbd4;
+  --s-40: #ffcec9;
+  --s-50: #ffb8b8;
+  --s-60: #db868d;
+
+  --gray-00: #fff;
+  --gray-10: #f8f8f8;
+  --gray-20: #f0f0f0;
+  --gray-30: #e6e6e6;
+  --gray-40: #d5d5d5;
+  --gray-60: #909090;
+  --gray-70: #696969;
+  --gray-80: #555;
+  --gray-90: #373737;
+  --gray-100: #171717;
+
+  --text: var(--gray-70);
+  --text-h: var(--gray-100);
+  --bg: var(--gray-00);
+  --border: var(--gray-30);
+  --code-bg: var(--P-10);
+  --accent: var(--P-80);
+  --accent-bg: var(--P-20);
+  --accent-border: var(--P-60);
+  --social-bg: var(--gray-10);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -32,15 +60,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
+    --text: var(--gray-30);
+    --text-h: var(--gray-00);
+    --bg: var(--gray-100);
+    --border: var(--gray-80);
+    --code-bg: var(--gray-90);
+    --accent: var(--P-40);
+    --accent-bg: rgba(122, 30, 32, 0.45);
+    --accent-border: var(--P-60);
+    --social-bg: rgba(55, 55, 55, 0.6);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }
