@@ -5,8 +5,6 @@ export type MyTrackResult = {
   memberCount: number
 }
 
-export function getMyTrack(accessToken: string) {
-  return request<MyTrackResult>('/api/tracks/me', {
-    accessToken,
-  })
+export function getMyTrack() {
+  return request<MyTrackResult>('/api/tracks/me')
 }

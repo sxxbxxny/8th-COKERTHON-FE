@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MissionBottomNav from '../../components/MissionBottomNav'
+import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
 
 const missions = [
   { title: '사람이 있는 공간에서 5분 머물기', reward: '00명 수행 중' },
@@ -28,6 +29,7 @@ const getPersonalMissions = () => {
 
 function Step3() {
   const navigate = useNavigate()
+  const memberCount = useTrackMemberCount('관계를 향한 한 걸음')
   const [completedMissions, setCompletedMissions] = useState<Set<string>>(new Set())
   const [personalMissions] = useState(getPersonalMissions)
   const [completedPersonalMissions, setCompletedPersonalMissions] = useState<Set<string>>(new Set())
@@ -75,7 +77,7 @@ function Step3() {
       <div className="mission-step-hero">
         <div className="mission-step-copy">
           <h1>관계를 향한 한 걸음</h1>
-          <p>지금 00명이 함께 하고 있어요</p>
+          <p>지금 {memberCount ?? '00'}명이 함께 하고 있어요</p>
         </div>
       </div>
 
