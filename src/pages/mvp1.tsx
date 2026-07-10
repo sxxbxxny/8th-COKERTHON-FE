@@ -1,0 +1,48 @@
+import { useState } from 'react'
+import Button from '../components/Button'
+import Radio from '../components/Radio'
+
+const difficultyOptions = [
+  { value: 'move', label: '한 발자국 움직이는 것' },
+  { value: 'outside', label: '밖으로 나가는 것' },
+  { value: 'people', label: '사람과 대면하는 것' },
+] as const
+
+function Mvp1() {
+  const [difficulty, setDifficulty] = useState('')
+
+  return (
+    <main className="flex h-dvh flex-col overflow-hidden bg-[#F8F8F8] px-[15px]">
+      <div className="min-h-0 flex-1 overflow-hidden pt-[clamp(60px,22.22dvh,190px)] pb-6">
+        <h1 className="m-0 ml-[15px] h-[68px] w-[248px] text-left font-[Pretendard] text-[24px] leading-[140%] font-semibold tracking-[-0.6px] text-[var(--gray-100,#171717)] not-italic">
+          지금 가장 어려운 한 걸음은
+          <br />
+          무엇인가요?
+        </h1>
+
+        <fieldset className="mt-[78px] flex min-w-0 flex-col items-center gap-4 border-0 p-0">
+          <legend className="sr-only">가장 어려운 한 걸음 선택</legend>
+          {difficultyOptions.map((option) => (
+            <Radio
+              key={option.value}
+              name="difficulty"
+              value={option.value}
+              checked={difficulty === option.value}
+              onChange={() => setDifficulty(option.value)}
+            >
+              {option.label}
+            </Radio>
+          ))}
+        </fieldset>
+      </div>
+
+      <footer className="shrink-0 pt-4 pb-[max(50px,env(safe-area-inset-bottom))]">
+        <Button className="mx-auto" disabled={!difficulty}>
+          다음
+        </Button>
+      </footer>
+    </main>
+  )
+}
+
+export default Mvp1

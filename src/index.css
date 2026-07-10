@@ -94,11 +94,11 @@
 }
 
 #root {
-  width: 390px;
+  width: 100%;
+  max-width: 390px;
   height: 844px;
   margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
