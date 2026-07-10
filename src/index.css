@@ -1,3 +1,21 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('./assets/Pretendard-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('./assets/Pretendard-SemiBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
 :root {
   --P-10: #fff6eb;
   --P-20: #ffead8;
@@ -27,6 +45,7 @@
   --gray-80: #555;
   --gray-90: #373737;
   --gray-100: #171717;
+  --color-gray-10: var(--gray-10);
 
   --text: var(--gray-70);
   --text-h: var(--gray-100);
@@ -40,8 +59,8 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: 'Pretendard', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Pretendard', system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--sans);
@@ -80,8 +99,8 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 390px;
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid var(--border);
@@ -93,6 +112,8 @@
 
 body {
   margin: 0;
+  min-width: 320px;
+  min-height: 100svh;
 }
 
 h1,
