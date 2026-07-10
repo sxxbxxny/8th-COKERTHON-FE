@@ -7,7 +7,7 @@ function App() {
   const [page, setPage] = useState<'login' | 'signup'>('login')
 
   return (
-    <main>
+    <main className="auth-page">
       {page === 'login' ? (
         <Login onMoveToSignup={() => setPage('signup')} />
       ) : (

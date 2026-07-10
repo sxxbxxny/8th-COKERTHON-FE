@@ -1,30 +1,31 @@
-main {
+.auth-page {
   max-width: 480px;
   padding: 32px 20px;
+  text-align: left;
 }
 
-h1 {
+.auth-page h1 {
   font-size: 24px;
   margin: 0 0 20px;
 }
 
-form {
+.auth-page form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-label {
+.auth-page label {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-input {
+.auth-page input {
   padding: 8px;
 }
 
-button {
+.auth-page button {
   width: fit-content;
   padding: 8px 12px;
 }
