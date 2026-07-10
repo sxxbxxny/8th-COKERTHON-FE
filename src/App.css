@@ -1324,6 +1324,28 @@
   height: 99px;
 }
 
+.my-step2-route {
+  width: min(308px, 82vw);
+  height: min(310px, calc(100% - 70px));
+  margin-top: 38px;
+}
+
+.my-step2-character {
+  position: absolute;
+  left: 40%;
+  top: 26%;
+  width: 149px;
+  height: 153px;
+}
+
+.my-step2-next {
+  position: absolute;
+  right: -5%;
+  bottom: -6%;
+  width: 94px;
+  height: 94px;
+}
+
 .my-complete1-page {
   display: flex;
   width: 100%;
