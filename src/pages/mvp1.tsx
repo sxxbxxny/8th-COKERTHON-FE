@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getMyTrack } from '../apis/tracks'
 import Button from '../components/Button'
 import Radio from '../components/Radio'
 
@@ -11,8 +12,30 @@ const difficultyOptions = [
 function Mvp1() {
   const [difficulty, setDifficulty] = useState('')
   const [step, setStep] = useState<1 | 2>(1)
+  const [memberCount, setMemberCount] = useState<number | null>(null)
 
   const isIntroStep = step === 2
+
+  useEffect(() => {
+    if (!isIntroStep) return
+
+    const accessToken = localStorage.getItem('accessToken')
+    if (!accessToken) return
+
+    let isCancelled = false
+
+    getMyTrack(accessToken)
+      .then((response) => {
+        if (!isCancelled) setMemberCount(response.result.memberCount)
+      })
+      .catch(() => {
+        if (!isCancelled) setMemberCount(null)
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [isIntroStep])
 
   return (
     <main className="relative flex h-full flex-col overflow-hidden bg-[#F8F8F8] px-[15px]">
@@ -58,7 +81,7 @@ function Mvp1() {
             이불 밖으로 한 걸음
           </h1>
           <p className="m-0 mx-auto mt-5 w-[228px] text-center font-[Pretendard] text-[16px] leading-[140%] font-normal tracking-[-0.4px] text-[var(--P-60,#DB8774)] not-italic">
-            당신과 같은 목표를 바라보는 사람이 00명이에요.
+            당신과 같은 목표를 바라보는 사람이 {memberCount ?? '-'}명이에요.
           </p>
         </div>
       )}

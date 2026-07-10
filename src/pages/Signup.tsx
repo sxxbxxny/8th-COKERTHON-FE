@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { signup } from '../apis/auth'
+import { login, signup } from '../apis/auth'
 import Button from '../components/Button'
 
 type SignupProps = {
@@ -31,6 +31,9 @@ function Signup({ onMoveToLogin, onSignupSuccess }: SignupProps) {
 
     try {
       await signup({ email, password, name })
+      const response = await login({ email, password })
+      localStorage.setItem('accessToken', response.result.accessToken)
+      localStorage.setItem('refreshToken', response.result.refreshToken)
       onSignupSuccess()
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '회원가입 실패')
