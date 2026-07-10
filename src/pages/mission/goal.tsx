@@ -3,9 +3,11 @@ import type { FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { createCustomMission } from '../../apis/missions'
 import closeIcon from '../../assets/X.svg'
+import { getStringList, storeStringList } from '../../utils/missionStorage'
 
 type GoalLocationState = {
   returnTo?: string
+  storageKey?: string
 }
 
 function Goal() {
@@ -14,7 +16,7 @@ function Goal() {
   const [goal, setGoal] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const { returnTo = '/mission/step1' } =
+  const { returnTo = '/mission/step1', storageKey = 'step1PersonalMissionsV2' } =
     (location.state as GoalLocationState | null) ?? {}
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -34,6 +36,8 @@ function Goal() {
 
     try {
       await createCustomMission({ title: trimmedGoal }, accessToken)
+      const personalMissions = getStringList(storageKey)
+      storeStringList(storageKey, [...personalMissions, trimmedGoal])
       navigate(returnTo, { replace: true })
     } catch (error) {
       setErrorMessage(

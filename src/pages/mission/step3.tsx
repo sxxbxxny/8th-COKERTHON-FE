@@ -4,6 +4,12 @@ import { completeMission, extractCompletedMissionIds, getTodayMissions } from '.
 import MissionBottomNav from '../../components/MissionBottomNav'
 import { useLatestCheer } from '../../hooks/useLatestCheer'
 import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
+import {
+  getNumberSet,
+  getStringList,
+  getUserStorageKey,
+  storeNumberSet,
+} from '../../utils/missionStorage'
 
 type StepLocationState = {
   restoreCompleted?: boolean
@@ -20,45 +26,15 @@ const completedMissionsStorageKey = 'step3CompletedMissionsV1'
 const missionStep = 3
 
 const getPersonalMissions = () => {
-  const storedMissions = localStorage.getItem(personalMissionsStorageKey)
-
-  if (storedMissions) {
-    try {
-      const parsedMissions = JSON.parse(storedMissions)
-
-      if (Array.isArray(parsedMissions)) {
-        return parsedMissions.filter((mission): mission is string => typeof mission === 'string')
-      }
-    } catch {
-      return []
-    }
-  }
-
-  return []
+  return getStringList(personalMissionsStorageKey)
 }
 
 const getStoredCompletedMissions = () => {
-  const storedMissionIds = localStorage.getItem(completedMissionsStorageKey)
-
-  if (!storedMissionIds) return new Set<number>()
-
-  try {
-    const parsedMissionIds = JSON.parse(storedMissionIds)
-
-    if (Array.isArray(parsedMissionIds)) {
-      return new Set(
-        parsedMissionIds.filter((missionId): missionId is number => typeof missionId === 'number'),
-      )
-    }
-  } catch {
-    return new Set<number>()
-  }
-
-  return new Set<number>()
+  return getNumberSet(completedMissionsStorageKey)
 }
 
 const storeCompletedMissions = (missionIds: Set<number>) => {
-  localStorage.setItem(completedMissionsStorageKey, JSON.stringify(Array.from(missionIds)))
+  storeNumberSet(completedMissionsStorageKey, missionIds)
 }
 
 function Step3() {
@@ -125,7 +101,7 @@ function Step3() {
   }
 
   const moveToComplete = () => {
-    localStorage.setItem('lastCompletedMissionStep', String(missionStep))
+    localStorage.setItem(getUserStorageKey('lastCompletedMissionStep'), String(missionStep))
     navigate('/mission/complete', { replace: true, state: { step: missionStep } })
   }
 

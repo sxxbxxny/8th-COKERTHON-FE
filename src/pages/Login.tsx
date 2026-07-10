@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { login } from '../apis/auth'
 import { getMyTrack } from '../apis/tracks'
 import Button from '../components/Button'
+import { setAuthUserKey } from '../utils/missionStorage'
 import { getMissionPathByTrackName } from '../utils/tracks'
 
 type LoginProps = {
@@ -26,6 +27,7 @@ function Login({ onMoveToSignup, onLoginSuccess }: LoginProps) {
       const response = await login({ email, password })
       localStorage.setItem('accessToken', response.result.accessToken)
       localStorage.setItem('refreshToken', response.result.refreshToken)
+      setAuthUserKey(email)
 
       try {
         const myTrackResponse = await getMyTrack()

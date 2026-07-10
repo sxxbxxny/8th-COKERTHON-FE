@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { createCheer } from '../../apis/cheers'
 import goBackIcon from '../../assets/GoBack.svg'
 import closeIcon from '../../assets/X.svg'
+import { getUserStorageKey } from '../../utils/missionStorage'
 
 type CompleteLocationState = {
   step?: number
@@ -22,7 +23,7 @@ const getMissionStep = (state: CompleteLocationState | null) => {
     return stateStep
   }
 
-  const storedStep = Number(localStorage.getItem('lastCompletedMissionStep'))
+  const storedStep = Number(localStorage.getItem(getUserStorageKey('lastCompletedMissionStep')))
 
   if (storedStep === 1 || storedStep === 2 || storedStep === 3) {
     return storedStep

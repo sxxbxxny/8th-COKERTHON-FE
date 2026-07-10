@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { login, signup } from '../apis/auth'
 import Button from '../components/Button'
+import { setAuthUserKey } from '../utils/missionStorage'
 
 type SignupProps = {
   onMoveToLogin: () => void
@@ -34,6 +35,7 @@ function Signup({ onMoveToLogin, onSignupSuccess }: SignupProps) {
       const response = await login({ email, password })
       localStorage.setItem('accessToken', response.result.accessToken)
       localStorage.setItem('refreshToken', response.result.refreshToken)
+      setAuthUserKey(email)
       onSignupSuccess()
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '회원가입 실패')
