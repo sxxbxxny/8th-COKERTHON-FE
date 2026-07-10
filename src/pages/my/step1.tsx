@@ -21,12 +21,17 @@ const stampPositions = [
   { left: '60%', top: '88%' },
 ]
 
+const completedStampCount = 10
+
 function MyStep1() {
   const location = useLocation()
   const missionPath =
     typeof (location.state as LocationState | null)?.missionPath === 'string'
       ? (location.state as LocationState).missionPath
       : '/mission/step1'
+
+  const isFootstepCompleted =
+    completedStampCount === stampPositions.length
 
   return (
     <section className="mission-step-page">
@@ -35,7 +40,12 @@ function MyStep1() {
           <h1>이불 밖으로 한 걸음</h1>
           <p>지금 00걸음 함께 하고 있어요</p>
         </div>
-        <img src="/images/my_my.svg" alt="" aria-hidden="true" />
+
+        <img
+          src="/images/my_my.svg"
+          alt=""
+          aria-hidden="true"
+        />
       </header>
 
       <main className="my-stamp-screen">
@@ -44,28 +54,60 @@ function MyStep1() {
           <p>다음 단계까지 3개 남았어요</p>
         </div>
 
-        <div className="my-stamp-route" aria-label="미션 수행 스탬프 현황">
-          <img className="my-stamp-path" src="/images/my_load1.svg" alt="" aria-hidden="true" />
-          {stampPositions.map((position) => (
-            <img
-              className="my-stamp-check"
-              src="/images/my_check.svg"
-              alt=""
-              aria-hidden="true"
-              style={position}
-              key={`${position.left}-${position.top}`}
-            />
-          ))}
+        <div
+          className="my-stamp-route"
+          aria-label="미션 수행 스탬프 현황"
+        >
           <img
-            className="my-stamp-next"
-            src="/images/my_footstep_gray.svg"
+            className="my-stamp-path"
+            src="/images/my_load1.svg"
             alt=""
             aria-hidden="true"
           />
-          <img className="my-stamp-character" src="/images/mychar1.svg" alt="" aria-hidden="true" />
+
+          {stampPositions.map((position, index) => {
+            const isCompleted = index < completedStampCount
+
+            return (
+              <img
+                className="my-stamp-check"
+                src={
+                  isCompleted
+                    ? '/images/my_check.svg'
+                    : '/images/my_uncheck.svg'
+                }
+                alt=""
+                aria-hidden="true"
+                style={position}
+                key={`${position.left}-${position.top}`}
+              />
+            )
+          })}
+
+          <img
+            className="my-stamp-next"
+            src={
+              isFootstepCompleted
+                ? '/images/my_footstep_pink.svg'
+                : '/images/my_footstep_gray.svg'
+            }
+            alt=""
+            aria-hidden="true"
+          />
+
+          <img
+            className="my-stamp-character"
+            src="/images/mychar1.svg"
+            alt=""
+            aria-hidden="true"
+          />
         </div>
       </main>
-      <MissionBottomNav activeTab="my" missionPath={missionPath} />
+
+      <MissionBottomNav
+        activeTab="my"
+        missionPath={missionPath}
+      />
     </section>
   )
 }
