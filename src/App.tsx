@@ -1,7 +1,13 @@
 import Button from './components/Button'
 import Radio from './components/Radio'
+import { useState } from 'react'
+import './App.css'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
 
 function App() {
+  const [page, setPage] = useState<'login' | 'signup'>('login')
+
   return (
     <main className="flex min-h-svh flex-col px-[15px] pt-[120px] pb-[50px] text-left">
       <h1 className="m-0 mb-10 text-[20px] leading-[140%] font-semibold tracking-[-0.5px] text-(--gray-100)">

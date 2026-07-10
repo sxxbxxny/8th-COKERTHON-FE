@@ -26,7 +26,6 @@
   --P-70: #b75c50;
   --P-80: #933732;
   --P-90: #7a1e20;
-  
 
   --s-10: #fff5f0;
   --s-20: #ffe9e2;
@@ -73,6 +72,25 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: var(--gray-30);
+    --text-h: var(--gray-00);
+    --bg: var(--gray-100);
+    --border: var(--gray-80);
+    --code-bg: var(--gray-90);
+    --accent: var(--P-40);
+    --accent-bg: rgba(122, 30, 32, 0.45);
+    --accent-border: var(--P-60);
+    --social-bg: rgba(55, 55, 55, 0.6);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
 }
 
 #root {
@@ -91,4 +109,9 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100svh;
+}
+
+button,
+input {
+  font: inherit;
 }
