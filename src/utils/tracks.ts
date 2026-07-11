@@ -22,3 +22,9 @@ const normalizeTrackName = (trackName: string) => trackName.replace(/\s/g, '')
 export function getMissionPathByTrackName(trackName: string) {
   return missionPathByTrackName[normalizeTrackName(trackName)] ?? null
 }
+
+export function getMyPathByTrackName(trackName: string) {
+  const missionPath = getMissionPathByTrackName(trackName)
+
+  return missionPath?.replace('/mission/', '/my/') ?? null
+}

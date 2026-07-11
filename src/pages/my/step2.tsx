@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { getMissionProgress } from '../../apis/missions'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { getMissionProgress, proceedMission } from '../../apis/missions'
+import { getMyTrack } from '../../apis/tracks'
 import MissionBottomNav from '../../components/MissionBottomNav'
 import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
 import { getUserStorageKey } from '../../utils/missionStorage'
+import { getMyPathByTrackName } from '../../utils/tracks'
 
 type LocationState = {
   missionPath?: string
@@ -23,6 +25,8 @@ const missionStep = 2
 
 function MyStep2() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const isProceedingRef = useRef(false)
   const memberCount = useTrackMemberCount('문 밖으로 한 걸음')
   const [progress, setProgress] = useState({
     requiredDays: stampPositions.length,
@@ -39,23 +43,39 @@ function MyStep2() {
 
     let isCancelled = false
 
-    getMissionProgress(accessToken)
-      .then((response) => {
+    getMyTrack()
+      .then(async (trackResponse) => {
+        if (isCancelled) return
+
+        const currentMyPath = getMyPathByTrackName(trackResponse.result.trackName)
+        if (currentMyPath && currentMyPath !== '/my/step2') {
+          navigate(currentMyPath, { replace: true })
+          return
+        }
+
+        const response = await getMissionProgress(accessToken)
         if (isCancelled) return
 
         setProgress({
           requiredDays: response.result.requiredDays,
           completedDays: response.result.completedDays,
         })
+
+        if (!response.result.canProceed || isProceedingRef.current) return
+
+        isProceedingRef.current = true
+        await proceedMission(accessToken)
+
+        navigate('/my/step3', { replace: true })
       })
       .catch(() => {
-        if (isCancelled) return
+        isProceedingRef.current = false
       })
 
     return () => {
       isCancelled = true
     }
-  }, [])
+  }, [navigate])
 
   const lastCompletedMissionStep = Number(
     localStorage.getItem(getUserStorageKey('lastCompletedMissionStep')),

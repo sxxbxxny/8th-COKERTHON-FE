@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { completeMission, extractCompletedMissionIds, getTodayMissions } from '../../apis/missions'
+import {
+  completeMission,
+  extractCompletedMissionIds,
+  extractTodayMissions,
+  getTodayMissions,
+  proceedMission,
+  waitForMissionProceed,
+} from '../../apis/missions'
+import type { TodayMission } from '../../apis/missions'
 import MissionBottomNav from '../../components/MissionBottomNav'
 import { useLatestCheer } from '../../hooks/useLatestCheer'
 import { useTrackMemberCount } from '../../hooks/useTrackMemberCount'
@@ -13,12 +21,6 @@ import {
 type StepLocationState = {
   restoreCompleted?: boolean
 }
-
-const missions = [
-  { id: 1, title: '물 한 잔 마시기', reward: '' },
-  { id: 2, title: '창문 열고 10분 환기하기', reward: '' },
-  { id: 3, title: '내 공간 5분 정리하기', reward: '' },
-]
 
 const completedMissionsStorageKey = 'step1CompletedMissionsV1'
 const missionStep = 1
@@ -38,39 +40,41 @@ function Step1() {
   const cheerMessage = useLatestCheer()
   const shouldRestoreCompleted =
     (state as StepLocationState | null)?.restoreCompleted === true
+  const [missions, setMissions] = useState<TodayMission[]>([])
   const [completedMissions, setCompletedMissions] = useState<Set<number>>(() => {
-    if (shouldRestoreCompleted) {
-      const restoredMissions = new Set(missions.map((mission) => mission.id))
-      storeCompletedMissions(restoredMissions)
-      return restoredMissions
-    }
-
     return getStoredCompletedMissions()
   })
   const [submittingMissions, setSubmittingMissions] = useState<Set<number>>(new Set())
   const [missionError, setMissionError] = useState('')
   const totalMissionCount = missions.length
-  const completedMissionCount = completedMissions.size
+  const completedMissionCount = missions.filter((mission) =>
+    completedMissions.has(mission.id),
+  ).length
   const isAllMissionsCompleted =
     totalMissionCount > 0 && completedMissionCount === totalMissionCount
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
-    if (!accessToken || shouldRestoreCompleted) return
+    if (!accessToken) return
 
     let isMounted = true
-    const visibleMissionIds = new Set(missions.map((mission) => mission.id))
 
     getTodayMissions(accessToken)
       .then(({ result }) => {
         if (!isMounted) return
 
+        const todayMissions = extractTodayMissions(result)
+        const visibleMissionIds = new Set(todayMissions.map((mission) => mission.id))
         const serverCompletedMissionIds = Array.from(extractCompletedMissionIds(result)).filter(
           (missionId) => visibleMissionIds.has(missionId),
         )
 
+        setMissions(todayMissions)
+
         setCompletedMissions((prev) => {
-          const next = new Set([...prev, ...serverCompletedMissionIds])
+          const next = shouldRestoreCompleted
+            ? new Set(visibleMissionIds)
+            : new Set([...prev, ...serverCompletedMissionIds])
           storeCompletedMissions(next)
           return next
         })
@@ -102,18 +106,27 @@ function Step1() {
     setSubmittingMissions((prev) => new Set(prev).add(missionId))
 
     try {
-      await completeMission(missionId, accessToken)
+      const { result } = await completeMission(missionId, accessToken)
 
       const nextCompletedMissions = new Set(completedMissions).add(missionId)
       setCompletedMissions(nextCompletedMissions)
       storeCompletedMissions(nextCompletedMissions)
 
-      if (
+      const areAllMissionsCompleted =
         totalMissionCount > 0 &&
-        nextCompletedMissions.size === totalMissionCount
-      ) {
-        moveToComplete()
+        missions.every((mission) => nextCompletedMissions.has(mission.id))
+
+      const canProceed =
+        result.trackComplete ||
+        (areAllMissionsCompleted && await waitForMissionProceed(accessToken))
+
+      if (canProceed) {
+        await proceedMission(accessToken)
+        navigate('/my/step2', { replace: true })
+        return
       }
+
+      if (areAllMissionsCompleted) moveToComplete()
     } catch (error) {
       setMissionError(
         error instanceof Error ? error.message : '미션 완료 처리에 실패했습니다.',
